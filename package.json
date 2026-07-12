@@ -1,0 +1,26 @@
+{
+  "name": "xinit-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "XInit — a deterministic, AI-native project operations engine",
+  "license": "MIT",
+  "author": "Krishnesh Mishra",
+  "type": "module",
+  "packageManager": "pnpm@11.9.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r --filter \"./packages/**\" build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "clean": "pnpm -r exec rm -rf dist coverage .tsbuildinfo"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}

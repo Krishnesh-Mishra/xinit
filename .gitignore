@@ -1,0 +1,28 @@
+# deps
+node_modules/
+.pnpm-store/
+
+# build
+dist/
+build/
+*.tsbuildinfo
+
+# test
+coverage/
+.vitest/
+
+# env / local
+.env
+.env.*
+!.env.example
+.DS_Store
+Thumbs.db
+
+# editor
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# xinit runtime
+.xinit/snapshots/
+*.log

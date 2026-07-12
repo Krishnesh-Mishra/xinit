@@ -1,0 +1,11 @@
+packages:
+  - "packages/*"
+  - "plugins/*"
+
+allowBuilds:
+  esbuild: true
+
+# esbuild ships a native binary via a postinstall build script; tsup and vitest
+# depend on it. It is a trusted, required dependency, so allow its build.
+onlyBuiltDependencies:
+  - esbuild
