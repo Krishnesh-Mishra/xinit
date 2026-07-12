@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "name": "mongodb",
+  "displayName": "MongoDB (Mongoose)",
+  "version": "1.0.0",
+  "appliesTo": { "type": "node-backend" },
+  "dependsOn": ["express"],
+  "conflicts": ["prisma-sqlite"],
+  "capabilities": { "install": true, "exec": false, "network": false },
+  "detect": { "dependency": "mongoose" },
+  "prompts": [
+    { "id": "dbName", "type": "text", "message": "Database name?", "default": "app" }
+  ]
+}

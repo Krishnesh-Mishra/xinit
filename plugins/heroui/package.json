@@ -1,0 +1,10 @@
+{
+  "name": "@xinit/plugin-heroui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "XInit reference plugin: HeroUI v3.",
+  "devDependencies": {
+    "@xinit/core": "workspace:*"
+  }
+}

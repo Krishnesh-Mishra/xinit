@@ -1,0 +1,10 @@
+{
+  "name": "@xinit/plugin-react",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "XInit reference plugin: React (Vite) scaffold.",
+  "devDependencies": {
+    "@xinit/core": "workspace:*"
+  }
+}
