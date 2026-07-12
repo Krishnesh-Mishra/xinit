@@ -1,0 +1,11 @@
+# Normalize line endings to LF in the repo (checkout may be CRLF on Windows).
+# Keeps patch-engine fixtures deterministic across platforms.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
