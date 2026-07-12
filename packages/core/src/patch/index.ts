@@ -1,4 +1,10 @@
-// M1: patch engine. Implemented in this folder.
-// Exports (planned): patchJson, patchConfig, ensureLine, ensureImport,
-// plus the line-ending / diff helpers. All pure + idempotent + CRLF-safe.
-export {};
+// M1: patch engine — pure, idempotent, CRLF-safe file surgery (SPEC §5, §6, §10).
+// All functions are string-in → PatchResult out; no filesystem access (the tx
+// / runtime layer owns I/O). `changed: false` means the edit was already applied.
+
+export { detectEol } from "./eol.js";
+export { patchJson } from "./json.js";
+export { patchConfig } from "./config.js";
+export { ensureLine } from "./line.js";
+export { ensureImport } from "./imports.js";
+export { patchToml } from "./toml.js";
