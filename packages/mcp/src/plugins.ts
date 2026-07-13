@@ -17,6 +17,8 @@ export interface PluginSummary {
   name: string;
   displayName: string;
   appliesTo?: PluginManifest["appliesTo"];
+  /** Supported app languages; omitted ⇒ no restriction. */
+  languages?: PluginManifest["languages"];
   capabilities: PluginManifest["capabilities"];
   /** Absolute path to the authored plugin folder (used by add_plugin). */
   dir: string;
@@ -70,6 +72,7 @@ export function listBundledPlugins(pluginsDir: string): PluginSummary[] {
       name: entry.manifest.name,
       displayName: entry.manifest.displayName,
       appliesTo: entry.manifest.appliesTo,
+      languages: entry.manifest.languages,
       capabilities: entry.manifest.capabilities,
       dir: entry.dir,
     });

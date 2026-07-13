@@ -56,6 +56,7 @@ design has failed. This is what keeps CLI and MCP at parity.
   "displayName": "HeroUI v3",
   "version": "1.0.0",
   "appliesTo": { "framework": "react" },
+  "languages": ["ts", "js"],           // supported app languages; omit ⇒ no restriction
   "dependsOn": ["tailwind-v4"],
   "conflicts": [],
   "requires": { "react": ">=19", "tailwindcss": ">=4" },
@@ -69,6 +70,12 @@ design has failed. This is what keeps CLI and MCP at parity.
 A **packed** plugin (single distributable JSON) additionally carries:
 - `files`: `{ "<path>": "<base64>" }` — templates inlined
 - `setup`: `"<bundled setup() source as a string>"`
+
+**`languages`** (optional `Language[]`, one of `"ts" | "js" | "python"`) declares
+which app languages the plugin supports. **Omitted ⇒ no restriction** (universal).
+Present ⇒ the plugin is compatible only when the target app's `language` is in the
+list. Compatibility filtering (CLI `manage`, MCP `list_plugins`/`search_plugins`)
+excludes a plugin whose `languages` does not include the app's language.
 
 ## 4. Plugins: folder in, single JSON out
 
@@ -138,6 +145,13 @@ interface Ctx {
   readText(path: string): string | null;
   prompt(p: Prompt): Promise<unknown>;
 
+  // SEMANTIC RESOLVERS (reads; deterministic priority order) — solve "location varies"
+  entryFile(): string;                         // best existing bootstrap, else conventional default
+  stylesheet(opts?: { createIfMissing?: boolean }): string;  // global CSS; can create+wire
+  configFile(kind: "vite"|"tailwind"|"tsconfig"|"next"|"metro"): string | null;
+  find(candidates: string[]): string | null;  // first existing
+  findOrCreate(candidates: string[], defaultPath: string, initialContent?: string): string;
+
   // WRITES (deferred → Plan → applied on commit)
   install(pkgs: string[]): void;
   installDev(pkgs: string[]): void;
@@ -147,10 +161,43 @@ interface Ctx {
   patchConfig(file: string, edit: ConfigEdit): void;
   ensureLine(file: string, line: string, opts?: { position?: "top" | "bottom"; after?: string }): void;
   ensureImport(file: string, spec: { import: string; call?: string }): void;
+  wrap(file: string, wrappers: WrapSpec | WrapSpec[]): void;  // JSX provider-wrapping codemod
   setScript(name: string, command: string): void;
   run(cmd: string): void;              // requires capabilities.exec
 }
 ```
+
+**Semantic resolvers** inspect disk immediately (relative to `appDir`) and return
+a *relative path*, resolving deterministically by priority so plugins never
+hardcode `"src/index.css"` or `"vite.config.ts"`:
+- `entryFile()` — package.json `main`/`module` if it exists, then a priority list
+  (`src/main.{tsx,jsx,ts,js}`, `src/index.{tsx,ts,jsx,js}`, `index.{tsx,ts,js}`,
+  `App.{tsx,jsx,js}`, RN `index.js`). Returns the best EXISTING match; if none
+  exist, the conventional default for the language/framework (so a create-flow can
+  `addFile` it — **the returned path may not exist yet**).
+- `stylesheet({ createIfMissing? })` — a `.css` imported by the entry, else a
+  common name (`src/index.css`, `src/global.css`, …). If missing and
+  `createIfMissing`, records `addFile(<css>, "")` + `ensureImport(entryFile(), <css>)`
+  to wire it and returns the path (later `ensureLine` calls compose onto it via the
+  plan overlay). If missing and not creating, returns the conventional default.
+- `configFile(kind)` — the real config file with its extension, or `null`.
+- `find` / `findOrCreate` — generic first-existing / first-existing-else-create.
+
+**`ctx.wrap(file, wrappers)`** — a format-preserving JSX codemod (recast +
+`@babel/parser`) that wraps the app root in provider components. It targets the
+first JSX argument of a `createRoot(...).render(<X/>)` / `ReactDOM.render(<X/>)`
+call, else the JSX returned by the default-exported component. `WrapSpec =
+{ component, from, props?, import? }` (`import` default `"named"`); an **array
+nests outermost-first**. The needed import is added idempotently. **props
+convention:** a value beginning with `{` is emitted as a JSX expression container
+verbatim — the author includes the container braces (`"{{ flex: 1 }}"` →
+`style={{ flex: 1 }}`, `"{true}"` → `prop={true}`); any other value becomes a
+string-literal attribute (`"x"` → `title="x"`). `wrap` is **idempotent** (a tree
+already wrapped by the outermost component is a no-op; wrappers already present are
+skipped) and **never corrupts the file**: if neither a render site nor a
+default-component return can be found, the file is left untouched and a manual-step
+warning (`"Could not auto-wrap <file>; wrap manually with <components>"`) is pushed
+into `ApplyResult.warnings` — exactly like `ctx.warn`.
 
 ### Plan
 ```jsonc

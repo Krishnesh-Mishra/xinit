@@ -63,7 +63,10 @@ export async function runManage(deps: ManageDeps = {}): Promise<void> {
   const pluginsDir = resolvePluginsDir(deps.pluginsDir);
   const available = listPlugins(pluginsDir).filter(
     (p) =>
-      pluginAppliesToApp(p.manifest, { framework: app.framework }) &&
+      pluginAppliesToApp(p.manifest, {
+        framework: app.framework,
+        language: app.language,
+      }) &&
       !app.plugins.includes(p.manifest.name),
   );
 

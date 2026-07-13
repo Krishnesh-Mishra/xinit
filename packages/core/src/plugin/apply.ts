@@ -19,6 +19,7 @@ import {
   ensureLine,
   patchConfig,
   patchJson,
+  wrapJsx,
 } from "../patch/index.js";
 
 export interface InstallSpec {
@@ -76,6 +77,10 @@ function realizeFileOp(
         content: ensureImport(before, { import: op.import, call: op.call })
           .content,
       };
+    case "wrap":
+      // Re-run against actual disk bytes; unresolvable ⇒ leave content as-is
+      // (the plan already surfaced the manual-step warning).
+      return { file: op.file, content: wrapJsx(before, op.wrappers).content };
     case "setScript":
       return {
         file: "package.json",
@@ -171,6 +176,7 @@ function fileTarget(op: Op): string | null {
     case "patchConfig":
     case "ensureLine":
     case "ensureImport":
+    case "wrap":
       return op.file;
     case "setScript":
       return "package.json";

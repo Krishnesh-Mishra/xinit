@@ -105,6 +105,8 @@ export function factsFromDefinition(
   if (def.version !== undefined) manifest.version = def.version as string;
   if (def.appliesTo !== undefined)
     manifest.appliesTo = def.appliesTo as PluginManifest["appliesTo"];
+  if (def.languages !== undefined)
+    manifest.languages = def.languages as PluginManifest["languages"];
   if (def.dependsOn !== undefined) manifest.dependsOn = def.dependsOn as string[];
   if (def.conflicts !== undefined) manifest.conflicts = def.conflicts as string[];
   if (def.requires !== undefined)

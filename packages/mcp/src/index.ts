@@ -69,10 +69,11 @@ export function registerTools(server: McpServer, deps: ToolDeps = {}): void {
       title: "List plugins",
       description:
         "List the bundled reference plugins (name, displayName, appliesTo, " +
-        "capabilities).",
-      inputSchema: {},
+        "languages, capabilities). Pass `language` (js|ts|python) to exclude " +
+        "plugins that do not support the target app's language.",
+      inputSchema: { language: z.string().optional() },
     },
-    () => run(() => listPluginsTool({}, deps)),
+    (args) => run(() => listPluginsTool(args, deps)),
   );
 
   server.registerTool(
@@ -80,8 +81,9 @@ export function registerTools(server: McpServer, deps: ToolDeps = {}): void {
     {
       title: "Search plugins",
       description:
-        "Filter the bundled reference plugins by name or display name.",
-      inputSchema: { query: z.string() },
+        "Filter the bundled reference plugins by name or display name. Pass " +
+        "`language` (js|ts|python) to also exclude language-incompatible plugins.",
+      inputSchema: { query: z.string(), language: z.string().optional() },
     },
     (args) => run(() => searchPluginsTool(args, deps)),
   );

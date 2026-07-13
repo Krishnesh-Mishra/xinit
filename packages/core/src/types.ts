@@ -63,6 +63,11 @@ export interface PluginManifest {
   displayName: string;
   version?: string;
   appliesTo?: { type?: string; framework?: string };
+  /**
+   * App languages this plugin supports. Omitted ⇒ no restriction (universal).
+   * Present ⇒ compatible only when the target app's `language` is in this list.
+   */
+  languages?: Language[];
   dependsOn?: string[];
   conflicts?: string[];
   /** semver ranges, e.g. { react: ">=19", tailwindcss: ">=4" }. */
@@ -79,6 +84,32 @@ export interface PluginManifest {
 }
 
 export type Answers = Record<string, unknown>;
+
+// ---------------------------------------------------------------------------
+// JSX wrapping (ctx.wrap / patch/wrap) — SPEC §5, §7
+// ---------------------------------------------------------------------------
+
+/**
+ * One JSX wrapper to apply to a component tree.
+ *
+ * `props` convention: a value that begins with `{` is emitted as a JSX
+ * expression container verbatim — the author includes the container braces
+ * (e.g. `"{{ flex: 1 }}"` → `style={{ flex: 1 }}`, `"{true}"` → `prop={true}`).
+ * Any other value becomes a string-literal attribute (`"x"` → `title="x"`).
+ */
+export interface WrapSpec {
+  /** The wrapper component's local name, e.g. "HeroUIProvider". */
+  component: string;
+  /** Module the component is imported from, e.g. "@heroui/react". */
+  from: string;
+  /** JSX props to place on the wrapper (see convention above). */
+  props?: Record<string, string>;
+  /** Import shape for the component. Default: "named". */
+  import?: "named" | "default";
+}
+
+/** The config files `ctx.configFile` can resolve. */
+export type ConfigFileKind = "vite" | "tailwind" | "tsconfig" | "next" | "metro";
 
 /** The default export shape of an authored setup.ts. */
 export type SetupFn = (ctx: Ctx, answers: Answers) => void | Promise<void>;
@@ -117,6 +148,36 @@ export interface Ctx {
   readText(path: string): string | null;
   prompt(p: Prompt): Promise<unknown>;
 
+  // SEMANTIC RESOLVERS (reads) — inspect disk immediately relative to appDir.
+  // Deterministic priority order; the "create" variants also record deferred
+  // writes. See SPEC §5.
+  /**
+   * Locate the app bootstrap/entry file. Returns the best EXISTING match, or —
+   * if none exist — the conventional default for the app's language/framework
+   * (so a create-flow can `addFile` it). The returned path may not exist yet.
+   */
+  entryFile(): string;
+  /**
+   * Locate the global stylesheet: a `.css` imported by the entry, else a common
+   * name. If missing and `createIfMissing`, records `addFile(<css>, "")` +
+   * `ensureImport(entryFile(), <css>)` to wire it and returns the path; if
+   * missing and not creating, returns the conventional default (may not exist).
+   */
+  stylesheet(opts?: { createIfMissing?: boolean }): string;
+  /** Resolve a real config file (with its extension), or null if none exists. */
+  configFile(kind: ConfigFileKind): string | null;
+  /** First existing path among `candidates`, or null. */
+  find(candidates: string[]): string | null;
+  /**
+   * First existing path among `candidates`; else record `addFile(defaultPath,
+   * initialContent ?? "")` and return `defaultPath`.
+   */
+  findOrCreate(
+    candidates: string[],
+    defaultPath: string,
+    initialContent?: string,
+  ): string;
+
   // WRITES — recorded into the Plan; applied only on commit.
   install(pkgs: string[]): void;
   installDev(pkgs: string[]): void;
@@ -126,6 +187,12 @@ export interface Ctx {
   patchConfig(file: string, edit: ConfigEdit): void;
   ensureLine(file: string, line: string, opts?: EnsureLineOpts): void;
   ensureImport(file: string, spec: { import: string; call?: string }): void;
+  /**
+   * Wrap the app's root JSX in one or more components (format-preserving
+   * codemod). An array nests outermost-first. Unresolvable targets never
+   * corrupt the file — they surface a manual-step warning instead (SPEC §5).
+   */
+  wrap(file: string, wrappers: WrapSpec | WrapSpec[]): void;
   setScript(name: string, command: string): void;
   /** Requires capabilities.exec. Effect is opaque → weak plan (command string only). */
   run(cmd: string): void;
@@ -149,6 +216,7 @@ export type Op =
   | { op: "patchConfig"; file: string; edit: ConfigEdit }
   | { op: "ensureLine"; file: string; line: string; opts?: EnsureLineOpts }
   | { op: "ensureImport"; file: string; import: string; call?: string }
+  | { op: "wrap"; file: string; wrappers: WrapSpec[] }
   | { op: "setScript"; name: string; command: string }
   | { op: "run"; cmd: string };
 

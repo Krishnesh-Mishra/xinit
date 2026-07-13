@@ -13,6 +13,7 @@ export default definePlugin({
   displayName: "shadcn/ui",
   version: "1.0.0",
   appliesTo: { framework: "react" },
+  languages: ["ts", "js"],
   dependsOn: ["tailwind-v4"],
   conflicts: [],
   capabilities: { install: true, exec: true, network: true },
@@ -27,15 +28,16 @@ export default definePlugin({
     },
   ],
   setup: async (ctx, answers) => {
-    // Path alias so shadcn's generated `@/...` imports resolve.
-    ctx.patchJson("tsconfig.json", {
+    // Path alias so shadcn's generated `@/...` imports resolve. Resolve the
+    // real tsconfig / vite config (extensions and location vary per scaffold).
+    ctx.patchJson(ctx.configFile("tsconfig") ?? "tsconfig.json", {
       compilerOptions: {
         baseUrl: ".",
         paths: { "@/*": ["./src/*"] },
       },
     });
 
-    ctx.patchConfig("vite.config.ts", {
+    ctx.patchConfig(ctx.configFile("vite") ?? "vite.config.ts", {
       ensureImport: { path: "node:path" },
       merge: {
         resolve: {

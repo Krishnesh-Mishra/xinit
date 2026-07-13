@@ -3,7 +3,7 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { isPluginDir, readManifestFacts } from "@xinit/core";
-import type { PluginManifest, Trust } from "@xinit/core";
+import type { Language, PluginManifest, Trust } from "@xinit/core";
 
 /** A `plugins/` dir is valid if any immediate subdir is an authored plugin. */
 function hasPlugins(dir: string): boolean {
@@ -123,13 +123,24 @@ export function listPlugins(pluginsDir: string): ResolvedPlugin[] {
 }
 
 /**
- * Does `plugin.appliesTo` match an app's detected framework/type? A plugin with
- * no `appliesTo` (or empty) is considered universally applicable.
+ * Does a plugin match an app? Combines `appliesTo` (framework/type) with the
+ * `languages` compatibility list. A plugin with no `appliesTo` is universally
+ * applicable framework-wise; a plugin with no `languages` is unrestricted by
+ * language. A `languages` list excludes any app whose language is not in it.
  */
 export function pluginAppliesToApp(
   manifest: PluginManifest,
-  app: { framework?: string; type?: string },
+  app: { framework?: string; type?: string; language?: Language },
 ): boolean {
+  // Language compatibility (SPEC §5): present ⇒ app language must be in the list.
+  if (
+    manifest.languages &&
+    app.language &&
+    !manifest.languages.includes(app.language)
+  ) {
+    return false;
+  }
+
   const at = manifest.appliesTo;
   if (!at) return true;
   if (at.framework && at.framework !== app.framework) return false;

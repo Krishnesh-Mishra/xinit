@@ -59,16 +59,36 @@ function toCard({ dir: _dir, ...rest }: PluginSummary): PluginCard {
   return rest;
 }
 
+/**
+ * A plugin is language-compatible when it declares no `languages` restriction,
+ * or the requested `language` is in its list. No language requested ⇒ no filter.
+ */
+function languageCompatible(p: PluginSummary, language?: string): boolean {
+  if (!language || !p.languages) return true;
+  return (p.languages as string[]).includes(language);
+}
+
+export interface ListArgs {
+  /** Optional target app language; excludes plugins that don't support it. */
+  language?: string;
+}
+
 export function listPluginsTool(
-  _args: Record<string, never> = {},
+  args: ListArgs = {},
   deps: ToolDeps = {},
 ): { plugins: PluginCard[] } {
   const pluginsDir = deps.pluginsDir ?? resolvePluginsDir();
-  return { plugins: listBundledPlugins(pluginsDir).map(toCard) };
+  return {
+    plugins: listBundledPlugins(pluginsDir)
+      .filter((p) => languageCompatible(p, args.language))
+      .map(toCard),
+  };
 }
 
 export interface SearchArgs {
   query: string;
+  /** Optional target app language; excludes plugins that don't support it. */
+  language?: string;
 }
 
 export function searchPluginsTool(
@@ -80,8 +100,9 @@ export function searchPluginsTool(
   const plugins = listBundledPlugins(pluginsDir)
     .filter(
       (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.displayName.toLowerCase().includes(q),
+        (p.name.toLowerCase().includes(q) ||
+          p.displayName.toLowerCase().includes(q)) &&
+        languageCompatible(p, args.language),
     )
     .map(toCard);
   return { query: args.query, plugins };

@@ -23,6 +23,7 @@ import {
   ensureLine,
   patchConfig,
   patchJson,
+  wrapJsx,
 } from "../patch/index.js";
 
 export type Trust = "first-party" | "third-party";
@@ -65,25 +66,64 @@ function readDisk(appDir: string, file: string): string {
 }
 
 /**
- * Project a single file-mutating op against current disk content.
- * Returns null for ops that do not mutate a file (installs/run).
+ * An in-memory projection of file content as ops are composed sequentially:
+ * multiple ops on the SAME file (e.g. two `ensureLine`s, or an `addFile`
+ * followed by a `wrap`) see each other's effects — matching how `apply`
+ * realizes them against disk in order. Seeded lazily from disk.
+ */
+class Overlay {
+  private readonly content = new Map<string, string>();
+  private readonly created = new Set<string>();
+
+  constructor(private readonly appDir: string) {}
+
+  get(file: string): string {
+    const cached = this.content.get(file);
+    if (cached !== undefined) return cached;
+    return readDisk(this.appDir, file);
+  }
+
+  exists(file: string): boolean {
+    if (this.content.has(file)) return true;
+    return fs.existsSync(path.join(this.appDir, file));
+  }
+
+  set(file: string, content: string): void {
+    this.content.set(file, content);
+  }
+}
+
+/** A wrap op that could not resolve a target → surfaced as a manual warning. */
+interface UnresolvedWrap {
+  warning: string;
+}
+
+/**
+ * Project a single file-mutating op against the current overlay content.
+ * Returns null for ops that do not mutate a file (installs/run), or an
+ * `UnresolvedWrap` for a wrap whose target could not be located.
  */
 function projectFileOp(
   op: Op,
-  appDir: string,
-): { file: string; before: string; result: PatchResult; summary: string } | null {
+  overlay: Overlay,
+):
+  | { file: string; before: string; result: PatchResult; summary: string }
+  | UnresolvedWrap
+  | null {
   switch (op.op) {
     case "addFile": {
-      const before = readDisk(appDir, op.to);
+      const before = overlay.get(op.to);
+      // Creating a new file is a change even when its content is empty.
+      const changed = before !== op.content || !overlay.exists(op.to);
       return {
         file: op.to,
         before,
-        result: { changed: before !== op.content, content: op.content },
+        result: { changed, content: op.content },
         summary: `create ${op.to}`,
       };
     }
     case "patchJson": {
-      const before = readDisk(appDir, op.file);
+      const before = overlay.get(op.file);
       return {
         file: op.file,
         before,
@@ -92,7 +132,7 @@ function projectFileOp(
       };
     }
     case "patchConfig": {
-      const before = readDisk(appDir, op.file);
+      const before = overlay.get(op.file);
       return {
         file: op.file,
         before,
@@ -101,7 +141,7 @@ function projectFileOp(
       };
     }
     case "ensureLine": {
-      const before = readDisk(appDir, op.file);
+      const before = overlay.get(op.file);
       return {
         file: op.file,
         before,
@@ -110,7 +150,7 @@ function projectFileOp(
       };
     }
     case "ensureImport": {
-      const before = readDisk(appDir, op.file);
+      const before = overlay.get(op.file);
       return {
         file: op.file,
         before,
@@ -118,8 +158,26 @@ function projectFileOp(
         summary: `ensure import "${op.import}" in ${op.file}`,
       };
     }
+    case "wrap": {
+      const before = overlay.get(op.file);
+      const result = wrapJsx(before, op.wrappers);
+      if (result.unresolved) {
+        const names = op.wrappers.map((w) => w.component).join(", ");
+        return {
+          warning: `Could not auto-wrap ${op.file}; wrap manually with ${names}`,
+        };
+      }
+      return {
+        file: op.file,
+        before,
+        result,
+        summary: `wrap ${op.file} in ${op.wrappers
+          .map((w) => `<${w.component}>`)
+          .join("")}`,
+      };
+    }
     case "setScript": {
-      const before = readDisk(appDir, "package.json");
+      const before = overlay.get("package.json");
       return {
         file: "package.json",
         before,
@@ -130,6 +188,12 @@ function projectFileOp(
     default:
       return null;
   }
+}
+
+function isUnresolvedWrap(
+  x: ReturnType<typeof projectFileOp>,
+): x is UnresolvedWrap {
+  return x !== null && "warning" in x;
 }
 
 /** Canonicalize (sort object keys) so the hash is stable across key ordering. */
@@ -162,6 +226,8 @@ export function buildPlan(
   const packages: string[] = [];
   const dev: string[] = [];
   const commands: string[] = [];
+  const warnings: string[] = [...(opts.warnings ?? [])];
+  const overlay = new Overlay(appDir);
 
   for (const op of ops) {
     if (op.op === "installDeps") {
@@ -174,8 +240,17 @@ export function buildPlan(
       continue;
     }
 
-    const projected = projectFileOp(op, appDir);
+    const projected = projectFileOp(op, overlay);
     if (!projected) continue;
+    // A wrap whose target could not be located → manual-step warning, no step.
+    if (isUnresolvedWrap(projected)) {
+      warnings.push(projected.warning);
+      continue;
+    }
+
+    // Compose: later ops on this file see this op's result (via the overlay).
+    overlay.set(projected.file, projected.result.content);
+
     // Idempotent no-op (already applied) → keep the Plan clean, drop the step.
     if (!projected.result.changed) continue;
 
@@ -207,7 +282,7 @@ export function buildPlan(
     installs: { packages, dev },
     commands,
     capabilities,
-    warnings: opts.warnings ?? [],
+    warnings,
     requiresConfirmation,
   };
 

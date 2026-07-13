@@ -80,6 +80,20 @@ describe("list_plugins / search_plugins", () => {
     const { plugins } = searchPluginsTool({ query: "shad" }, { pluginsDir });
     expect(plugins.map((p) => p.name)).toEqual(["shadcn"]);
   });
+
+  it("surfaces the languages field and filters by target app language", () => {
+    const all = listPluginsTool({}, { pluginsDir }).plugins;
+    // The bundled reference plugins are all JS/TS.
+    expect(all.every((p) => p.languages?.includes("ts"))).toBe(true);
+
+    // Filtering for a python app excludes every JS/TS-only plugin.
+    const py = listPluginsTool({ language: "python" }, { pluginsDir }).plugins;
+    expect(py).toEqual([]);
+
+    // A ts app keeps them.
+    const ts = listPluginsTool({ language: "ts" }, { pluginsDir }).plugins;
+    expect(ts.length).toBe(all.length);
+  });
 });
 
 describe("add_plugin consent handshake (SPEC §8)", () => {

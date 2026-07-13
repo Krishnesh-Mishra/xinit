@@ -11,6 +11,7 @@ export default definePlugin({
   displayName: "React (Vite)",
   version: "1.0.0",
   appliesTo: { type: "new-app" },
+  languages: ["ts", "js"],
   dependsOn: [],
   conflicts: [],
   capabilities: { install: true, exec: false, network: false },

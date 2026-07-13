@@ -12,10 +12,12 @@ import type {
   Answers,
   Capabilities,
   ConfigEdit,
+  ConfigFileKind,
   Ctx,
   EnsureLineOpts,
   Op,
   Prompt,
+  WrapSpec,
 } from "../types.js";
 
 export interface RecordingCtxOptions {
@@ -90,6 +92,158 @@ export class RecordingCtx implements Ctx {
     return this.prompter(p);
   }
 
+  // --- SEMANTIC RESOLVERS (reads, deterministic priority order) -----------
+
+  /** True when the app looks like a TypeScript project. */
+  private isTs(): boolean {
+    if (this.exists("tsconfig.json")) return true;
+    const pkg = this.readJson("package.json") as {
+      dependencies?: Record<string, unknown>;
+      devDependencies?: Record<string, unknown>;
+    } | null;
+    const deps = { ...pkg?.dependencies, ...pkg?.devDependencies };
+    return "typescript" in deps;
+  }
+
+  /** True when a given package is a declared dependency of the app. */
+  private hasDep(name: string): boolean {
+    const pkg = this.readJson("package.json") as {
+      dependencies?: Record<string, unknown>;
+      devDependencies?: Record<string, unknown>;
+    } | null;
+    return (
+      name in { ...pkg?.dependencies } || name in { ...pkg?.devDependencies }
+    );
+  }
+
+  entryFile(): string {
+    const ts = this.isTs();
+
+    // 1. Explicit entry from package.json "main"/"module", if it exists.
+    const pkg = this.readJson("package.json") as {
+      main?: unknown;
+      module?: unknown;
+    } | null;
+    for (const field of [pkg?.module, pkg?.main]) {
+      if (typeof field === "string" && field.trim() !== "" && this.exists(field)) {
+        return normalizeRel(field);
+      }
+    }
+
+    // 2. Priority list of conventional entry files (first existing wins).
+    const priority = [
+      "src/main.tsx",
+      "src/main.jsx",
+      "src/main.ts",
+      "src/main.js",
+      "src/index.tsx",
+      "src/index.ts",
+      "src/index.jsx",
+      "src/index.js",
+      "index.tsx",
+      "index.ts",
+      "index.js", // React Native's registerRootComponent entry
+      "App.tsx",
+      "App.jsx",
+      "App.js",
+    ];
+    const existing = priority.find((p) => this.exists(p));
+    if (existing) return existing;
+
+    // 3. No entry on disk yet → conventional default for the language/framework.
+    if (this.hasDep("react-native") || this.hasDep("expo")) return "index.js";
+    return ts ? "src/main.tsx" : "src/main.jsx";
+  }
+
+  /** Resolve a `.css` module referenced by the entry file, if it exists. */
+  private cssImportedByEntry(): string | null {
+    const entry = this.entryFile();
+    const src = this.readText(entry);
+    if (src === null) return null;
+    const re = /import\s+(?:[^'"]*from\s+)?['"]([^'"]+\.css)['"]/g;
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(src)) !== null) {
+      const ref = m[1]!;
+      // Resolve relative to the entry file's directory.
+      const rel = normalizeRel(path.join(path.dirname(entry), ref));
+      if (this.exists(rel)) return rel;
+    }
+    return null;
+  }
+
+  stylesheet(opts?: { createIfMissing?: boolean }): string {
+    // 1. A `.css` imported by the entry file.
+    const imported = this.cssImportedByEntry();
+    if (imported) return imported;
+
+    // 2. Common global-stylesheet names.
+    const common = [
+      "src/index.css",
+      "src/global.css",
+      "src/app.css",
+      "global.css",
+      "app/global.css",
+      "styles/global.css",
+    ];
+    const found = common.find((p) => this.exists(p));
+    if (found) return found;
+
+    // Conventional default location for this project shape.
+    const defaultCss = this.exists("src") || this.isTs() ? "src/index.css" : "index.css";
+
+    // 3. Create + wire it on request.
+    if (opts?.createIfMissing) {
+      this.addFile(defaultCss, "");
+      const entry = this.entryFile();
+      const ref = relativeImport(entry, defaultCss);
+      this.ensureImport(entry, { import: ref });
+      return defaultCss;
+    }
+
+    return defaultCss;
+  }
+
+  configFile(kind: ConfigFileKind): string | null {
+    const candidates: Record<ConfigFileKind, string[]> = {
+      vite: [
+        "vite.config.ts",
+        "vite.config.js",
+        "vite.config.mts",
+        "vite.config.mjs",
+      ],
+      tailwind: [
+        "tailwind.config.ts",
+        "tailwind.config.js",
+        "tailwind.config.cjs",
+        "tailwind.config.mjs",
+      ],
+      tsconfig: ["tsconfig.json"],
+      next: [
+        "next.config.ts",
+        "next.config.js",
+        "next.config.mjs",
+        "next.config.cjs",
+      ],
+      metro: ["metro.config.js", "metro.config.ts", "metro.config.cjs"],
+    };
+    return this.find(candidates[kind]);
+  }
+
+  find(candidates: string[]): string | null {
+    return candidates.find((p) => this.exists(p)) ?? null;
+  }
+
+  findOrCreate(
+    candidates: string[],
+    defaultPath: string,
+    initialContent = "",
+  ): string {
+    const existing = this.find(candidates);
+    if (existing) return existing;
+    this.addFile(defaultPath, initialContent);
+    return defaultPath;
+  }
+
   // --- WRITES (deferred → recorded) ---------------------------------------
 
   install(pkgs: string[]): void {
@@ -131,6 +285,11 @@ export class RecordingCtx implements Ctx {
     });
   }
 
+  wrap(file: string, wrappers: WrapSpec | WrapSpec[]): void {
+    const list = Array.isArray(wrappers) ? wrappers : [wrappers];
+    this.recorded.push({ op: "wrap", file, wrappers: list });
+  }
+
   setScript(name: string, command: string): void {
     this.recorded.push({ op: "setScript", name, command });
   }
@@ -147,4 +306,20 @@ export class RecordingCtx implements Ctx {
   warn(message: string): void {
     this.recordedWarnings.push(message);
   }
+}
+
+/** Normalize a filesystem-style relative path to forward slashes. */
+function normalizeRel(p: string): string {
+  return p.split(path.sep).join("/").replace(/^\.\//, "");
+}
+
+/**
+ * A module specifier importing `target` from `from`'s directory, e.g.
+ * (`src/main.tsx`, `src/index.css`) → `"./index.css"`. Extension is dropped for
+ * JS/TS, kept for CSS so the bundler treats it as a side-effect import.
+ */
+function relativeImport(from: string, target: string): string {
+  let rel = path.relative(path.dirname(from), target).split(path.sep).join("/");
+  if (!rel.startsWith(".")) rel = `./${rel}`;
+  return rel;
 }

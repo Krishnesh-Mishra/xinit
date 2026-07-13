@@ -14,6 +14,7 @@ export default definePlugin({
   displayName: "HeroUI v3",
   version: "1.0.0",
   appliesTo: { framework: "react" },
+  languages: ["ts", "js"],
   dependsOn: ["tailwind-v4"],
   conflicts: [],
   requires: { react: ">=19", tailwindcss: ">=4" },
@@ -24,16 +25,21 @@ export default definePlugin({
     ctx.install(["@heroui/styles", "@heroui/react"]);
     ctx.installDev(["@tailwindcss/vite", "tailwindcss"]);
 
-    ctx.patchConfig("vite.config.ts", {
+    // Resolve the real Vite config (extension varies) rather than hardcoding.
+    ctx.patchConfig(ctx.configFile("vite") ?? "vite.config.ts", {
       ensureImport: { tailwindcss: "@tailwindcss/vite" },
       addToArray: { path: "plugins", value: "tailwindcss()" },
     });
 
+    // Locate (or create + wire) the global stylesheet instead of assuming
+    // "src/index.css" — its location varies across scaffolds.
+    const css = ctx.stylesheet({ createIfMissing: true });
+
     // ORDER IS CRITICAL: Tailwind's layers must be declared before HeroUI's
     // styles so HeroUI can build on them. `after` pins the second import right
     // below the first (SPEC §6.4 — position-aware inserts).
-    ctx.ensureLine("src/index.css", '@import "tailwindcss";', { position: "top" });
-    ctx.ensureLine("src/index.css", '@import "@heroui/styles";', {
+    ctx.ensureLine(css, '@import "tailwindcss";', { position: "top" });
+    ctx.ensureLine(css, '@import "@heroui/styles";', {
       after: '@import "tailwindcss";',
     });
   },

@@ -16,6 +16,7 @@ import type {
   Capabilities,
   Ctx,
   DetectRule,
+  Language,
   Prompt,
 } from "../types.js";
 
@@ -29,6 +30,11 @@ export interface PluginDefinition {
   displayName: string;
   version?: string;
   appliesTo?: { type?: string; framework?: string };
+  /**
+   * App languages this plugin supports. Omitted ⇒ universal; present ⇒ only
+   * compatible when the app's `language` is in this list (SPEC §5).
+   */
+  languages?: Language[];
   dependsOn?: string[];
   conflicts?: string[];
   /** semver ranges, e.g. { react: ">=19", tailwindcss: ">=4" }. */

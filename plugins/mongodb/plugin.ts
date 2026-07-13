@@ -9,6 +9,7 @@ export default definePlugin({
   displayName: "MongoDB (Mongoose)",
   version: "1.0.0",
   appliesTo: { type: "node-backend" },
+  languages: ["ts", "js"],
   dependsOn: ["express"],
   conflicts: ["prisma-sqlite"],
   capabilities: { install: true, exec: false, network: false },
