@@ -1,0 +1,10 @@
+{
+  "name": "@xinit/plugin-ws",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "XInit plugin: WebSocket support via the ws library.",
+  "devDependencies": {
+    "@xinit/core": "workspace:*"
+  }
+}
