@@ -1,0 +1,139 @@
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { fileURLToPath } from "node:url";
+
+import type { PluginManifest, Trust } from "@xinit/core";
+
+/** A `plugins/` dir is valid if any immediate subdir holds a `plugin.json`. */
+function hasPlugins(dir: string): boolean {
+  try {
+    return fs
+      .readdirSync(dir, { withFileTypes: true })
+      .some((e) => e.isDirectory() && fs.existsSync(path.join(dir, e.name, "plugin.json")));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Locate the bundled reference plugins directory by walking up from this module
+ * until an ancestor contains a valid `plugins/` folder. This is robust to the
+ * differing depths of the built bundle (`packages/cli/dist/cli.js`) and the
+ * source under test (`packages/cli/src/lib/*`), which flatten differently.
+ * `--plugins-dir` / `XINIT_PLUGINS_DIR` override this.
+ */
+export function defaultPluginsDir(): string {
+  let dir = path.dirname(fileURLToPath(import.meta.url));
+  for (let i = 0; i < 8; i++) {
+    const candidate = path.join(dir, "plugins");
+    if (hasPlugins(candidate)) return candidate;
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  // Fallback: repo-root guess for a built dist layout (packages/cli/dist).
+  return path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../..", "plugins");
+}
+
+export function resolvePluginsDir(override?: string): string {
+  if (override) return path.resolve(override);
+  const env = process.env.XINIT_PLUGINS_DIR;
+  if (env) return path.resolve(env);
+  return defaultPluginsDir();
+}
+
+/** Read a plugin's `plugin.json` from its folder (fast — no packing). */
+export function readManifest(dir: string): PluginManifest {
+  const file = path.join(dir, "plugin.json");
+  const raw = fs.readFileSync(file, "utf8");
+  return JSON.parse(raw) as PluginManifest;
+}
+
+export interface ResolvedPlugin {
+  /** Absolute path to the plugin folder. */
+  dir: string;
+  manifest: PluginManifest;
+  /** Bundled plugins are first-party; an arbitrary path the user points at is not. */
+  trust: Trust;
+}
+
+function looksLikePluginDir(p: string): boolean {
+  try {
+    return fs.statSync(path.join(p, "plugin.json")).isFile();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Resolve the `<plugin>` argument of `xinit add`:
+ * - an existing path to a plugin folder → third-party (unless it lives under the
+ *   bundled plugins dir), or
+ * - a bare name resolved against the bundled plugins dir → first-party.
+ */
+export function resolvePluginArg(arg: string, pluginsDir: string): ResolvedPlugin {
+  // 1. Explicit path to a plugin folder.
+  const asPath = path.resolve(arg);
+  if (looksLikePluginDir(asPath)) {
+    const bundled = path.resolve(pluginsDir);
+    const isBundled = asPath === bundled || asPath.startsWith(bundled + path.sep);
+    return {
+      dir: asPath,
+      manifest: readManifest(asPath),
+      trust: isBundled ? "first-party" : "third-party",
+    };
+  }
+
+  // 2. Bare name under the bundled plugins dir.
+  const named = path.join(pluginsDir, arg);
+  if (looksLikePluginDir(named)) {
+    return { dir: named, manifest: readManifest(named), trust: "first-party" };
+  }
+
+  throw new Error(
+    `Plugin "${arg}" not found. Pass a path to a plugin folder, or a name under ${pluginsDir}.`,
+  );
+}
+
+/**
+ * List every plugin available in the bundled registry (name + manifest).
+ * Used by `manage` to offer compatible plugins for an app.
+ */
+export function listPlugins(pluginsDir: string): ResolvedPlugin[] {
+  let entries: fs.Dirent[];
+  try {
+    entries = fs.readdirSync(pluginsDir, { withFileTypes: true });
+  } catch {
+    return [];
+  }
+  const out: ResolvedPlugin[] = [];
+  for (const e of entries) {
+    if (!e.isDirectory()) continue;
+    const dir = path.join(pluginsDir, e.name);
+    if (!looksLikePluginDir(dir)) continue;
+    try {
+      out.push({ dir, manifest: readManifest(dir), trust: "first-party" });
+    } catch {
+      // Skip an unreadable manifest rather than failing the whole listing.
+    }
+  }
+  return out;
+}
+
+/**
+ * Does `plugin.appliesTo` match an app's detected framework/type? A plugin with
+ * no `appliesTo` (or empty) is considered universally applicable.
+ */
+export function pluginAppliesToApp(
+  manifest: PluginManifest,
+  app: { framework?: string; type?: string },
+): boolean {
+  const at = manifest.appliesTo;
+  if (!at) return true;
+  if (at.framework && at.framework !== app.framework) return false;
+  if (at.type && app.type && at.type !== app.type) return false;
+  // `appliesTo.type` describes app *kind* (e.g. "new-app", "node-backend"); we
+  // only have a framework from detection, so a type constraint we can't verify
+  // is treated permissively rather than hidden.
+  return true;
+}
