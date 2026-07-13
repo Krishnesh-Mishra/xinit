@@ -1,6 +1,6 @@
 {
   "name": "initup",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "initup — the deterministic hands your AI agent uses to touch your project. Install + patch + generate a technology as one idempotent, reversible operation. CLI command: `initup`.",
   "keywords": [
     "cli",

@@ -83,16 +83,21 @@ describe("list_plugins / search_plugins", () => {
 
   it("surfaces the languages field and filters by target app language", () => {
     const all = listPluginsTool({}, { pluginsDir }).plugins;
-    // The bundled reference plugins are all JS/TS.
-    expect(all.every((p) => p.languages?.includes("ts"))).toBe(true);
+    expect(all.length).toBeGreaterThan(0);
 
-    // Filtering for a python app excludes every JS/TS-only plugin.
+    // The catalog now spans JS/TS and Python plugins. Filtering for a python
+    // app returns python-capable plugins (e.g. uv); each either declares
+    // "python" or is universal (no languages restriction).
     const py = listPluginsTool({ language: "python" }, { pluginsDir }).plugins;
-    expect(py).toEqual([]);
+    expect(py.length).toBeGreaterThan(0);
+    expect(py.every((p) => !p.languages || p.languages.includes("python"))).toBe(true);
+    expect(py.some((p) => p.name === "uv")).toBe(true);
 
-    // A ts app keeps them.
+    // A ts app keeps JS/TS (and universal) plugins and excludes python-only ones.
     const ts = listPluginsTool({ language: "ts" }, { pluginsDir }).plugins;
-    expect(ts.length).toBe(all.length);
+    expect(ts.length).toBeGreaterThan(0);
+    expect(ts.every((p) => !p.languages || p.languages.includes("ts"))).toBe(true);
+    expect(ts.some((p) => p.name === "uv")).toBe(false);
   });
 });
 
