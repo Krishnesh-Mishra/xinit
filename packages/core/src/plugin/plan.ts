@@ -31,6 +31,8 @@ export interface BuildPlanOptions {
   trust: Trust;
   /** Declared capabilities from the manifest (network is only knowable here). */
   capabilities: Capabilities;
+  /** Manual steps surfaced by the plugin via ctx.warn (carried into the Plan). */
+  warnings?: string[];
 }
 
 /** Minimal unified-ish diff: emit only the changed region (common ends trimmed). */
@@ -205,6 +207,7 @@ export function buildPlan(
     installs: { packages, dev },
     commands,
     capabilities,
+    warnings: opts.warnings ?? [],
     requiresConfirmation,
   };
 

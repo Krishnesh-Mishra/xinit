@@ -6,6 +6,7 @@ import { runCreate } from "./commands/create.js";
 import { detectCommand } from "./commands/detect.js";
 import { runDoctor } from "./commands/doctor.js";
 import { runManage } from "./commands/manage.js";
+import { runMake } from "./commands/make.js";
 import { runPack } from "./commands/pack.js";
 import { CancelledError } from "./lib/prompts.js";
 
@@ -142,6 +143,17 @@ cli
   .action((dir: string, options: { out?: string; json?: boolean }) =>
     guard(!!options.json, () =>
       runPack(dir, { out: options.out, json: options.json }).then(() => {}),
+    ),
+  );
+
+// xinit make <entry> — compile a typed plugin.ts (or folder) → single JSON.
+cli
+  .command("make <entry>", "Compile a typed plugin.ts (or folder) into a single JSON")
+  .option("--out <file>", "Output file (default: <name>.json)")
+  .option("--json", "Machine-readable output (stdout is JSON only)")
+  .action((entry: string, options: { out?: string; json?: boolean }) =>
+    guard(!!options.json, () =>
+      runMake(entry, { out: options.out, json: options.json }).then(() => {}),
     ),
   );
 

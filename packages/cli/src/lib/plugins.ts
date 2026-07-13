@@ -2,14 +2,15 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { isPluginDir, readManifestFacts } from "@xinit/core";
 import type { PluginManifest, Trust } from "@xinit/core";
 
-/** A `plugins/` dir is valid if any immediate subdir holds a `plugin.json`. */
+/** A `plugins/` dir is valid if any immediate subdir is an authored plugin. */
 function hasPlugins(dir: string): boolean {
   try {
     return fs
       .readdirSync(dir, { withFileTypes: true })
-      .some((e) => e.isDirectory() && fs.existsSync(path.join(dir, e.name, "plugin.json")));
+      .some((e) => e.isDirectory() && isPluginDir(path.join(dir, e.name)));
   } catch {
     return false;
   }
@@ -42,11 +43,16 @@ export function resolvePluginsDir(override?: string): string {
   return defaultPluginsDir();
 }
 
-/** Read a plugin's `plugin.json` from its folder (fast — no packing). */
+/**
+ * Read a plugin's manifest facts from its folder without running setup —
+ * supports both the `plugin.json` and typed `plugin.ts` authored shapes.
+ */
 export function readManifest(dir: string): PluginManifest {
-  const file = path.join(dir, "plugin.json");
-  const raw = fs.readFileSync(file, "utf8");
-  return JSON.parse(raw) as PluginManifest;
+  const manifest = readManifestFacts(dir);
+  if (!manifest) {
+    throw new Error(`no plugin.json or plugin.ts found in ${dir}`);
+  }
+  return manifest;
 }
 
 export interface ResolvedPlugin {
@@ -58,11 +64,7 @@ export interface ResolvedPlugin {
 }
 
 function looksLikePluginDir(p: string): boolean {
-  try {
-    return fs.statSync(path.join(p, "plugin.json")).isFile();
-  } catch {
-    return false;
-  }
+  return isPluginDir(p);
 }
 
 /**

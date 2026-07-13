@@ -3,6 +3,9 @@
 Wires up **shadcn/ui** in a React + Tailwind v4 app by driving the official
 `shadcn` CLI.
 
+> Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
+> Compile it to a distributable JSON with `xinit make plugins/shadcn/plugin.ts`.
+
 - **Applies to:** `framework: react`.
 - **Depends on:** `tailwind-v4`.
 

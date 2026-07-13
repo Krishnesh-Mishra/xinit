@@ -17,14 +17,19 @@ export interface LoadedPlugin {
   file(ref: string): string;
 }
 
-/** Load an authored plugin folder (packs it to obtain the bundled setup). */
-export async function loadPluginFromDir(dir: string): Promise<LoadedPlugin> {
-  const manifest = await pack(dir);
+/**
+ * Load an authored plugin — a folder (old `plugin.json`+`setup.ts` OR a typed
+ * `plugin.ts`) or a direct typed `.ts` file. `pack` normalizes all forms; the
+ * `file()` resolver reads templates relative to the plugin's base directory.
+ */
+export async function loadPluginFromDir(entry: string): Promise<LoadedPlugin> {
+  const manifest = await pack(entry);
+  const baseDir = fs.statSync(entry).isFile() ? path.dirname(entry) : entry;
   return {
     manifest,
     setupSource: manifest.setup ?? "",
     file(ref: string): string {
-      return fs.readFileSync(path.join(dir, ...ref.split("/")), "utf8");
+      return fs.readFileSync(path.join(baseDir, ...ref.split("/")), "utf8");
     },
   };
 }

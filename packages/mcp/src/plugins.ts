@@ -10,7 +10,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { loadRegistry, type PluginManifest } from "@xinit/core";
+import { isPluginDir, loadRegistry, type PluginManifest } from "@xinit/core";
 
 /** The manifest fields surfaced to an agent when it lists/searches plugins. */
 export interface PluginSummary {
@@ -48,7 +48,7 @@ export function resolvePluginsDir(): string {
   return override ? path.resolve(override) : path.join(process.cwd(), "plugins");
 }
 
-/** True when `dir` holds at least one `<child>/plugin.json`. */
+/** True when `dir` holds at least one authored plugin child (`plugin.json`/`plugin.ts`). */
 function isPluginsDir(dir: string): boolean {
   let entries: fs.Dirent[];
   try {
@@ -57,9 +57,7 @@ function isPluginsDir(dir: string): boolean {
     return false;
   }
   return entries.some(
-    (e) =>
-      e.isDirectory() &&
-      fs.existsSync(path.join(dir, e.name, "plugin.json")),
+    (e) => e.isDirectory() && isPluginDir(path.join(dir, e.name)),
   );
 }
 

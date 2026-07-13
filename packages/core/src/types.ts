@@ -129,6 +129,13 @@ export interface Ctx {
   setScript(name: string, command: string): void;
   /** Requires capabilities.exec. Effect is opaque → weak plan (command string only). */
   run(cmd: string): void;
+
+  /**
+   * Surface a manual step the plugin cannot fully automate (e.g. "wrap your app
+   * in the Provider"). Collected and reported in `ApplyResult.warnings` — never
+   * a write, so it is safe to call unconditionally.
+   */
+  warn(message: string): void;
 }
 
 // ---------------------------------------------------------------------------
@@ -166,6 +173,8 @@ export interface Plan {
   /** exec commands, if any (weak-guarantee ops). */
   commands: string[];
   capabilities: Capability[];
+  /** Manual steps surfaced via `ctx.warn` — carried through to ApplyResult. */
+  warnings: string[];
   requiresConfirmation: boolean;
   /** Hash of this exact Plan; used by the MCP consent handshake (SPEC §8). */
   confirmToken?: string;

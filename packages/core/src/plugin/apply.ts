@@ -146,7 +146,7 @@ export async function applyPlan(
       created,
       modified,
       commands: plan.commands,
-      warnings: [],
+      warnings: [...plan.warnings],
     };
   } catch (err) {
     await tx.rollback();
@@ -157,7 +157,7 @@ export async function applyPlan(
       created: [],
       modified: [],
       commands: plan.commands,
-      warnings: [err instanceof Error ? err.message : String(err)],
+      warnings: [...plan.warnings, err instanceof Error ? err.message : String(err)],
     };
   }
 }

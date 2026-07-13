@@ -39,6 +39,7 @@ export class RecordingCtx implements Ctx {
   private readonly fileResolver: (ref: string) => string;
   private readonly capabilities: Capabilities;
   private readonly recorded: Op[] = [];
+  private readonly recordedWarnings: string[] = [];
 
   constructor(opts: RecordingCtxOptions) {
     this.appDir = opts.appDir;
@@ -52,6 +53,11 @@ export class RecordingCtx implements Ctx {
   /** The ordered write ops recorded so far. */
   get ops(): Op[] {
     return this.recorded;
+  }
+
+  /** Manual steps surfaced via warn(), in call order. */
+  get warnings(): string[] {
+    return this.recordedWarnings;
   }
 
   private abs(p: string): string {
@@ -136,5 +142,9 @@ export class RecordingCtx implements Ctx {
       );
     }
     this.recorded.push({ op: "run", cmd });
+  }
+
+  warn(message: string): void {
+    this.recordedWarnings.push(message);
   }
 }

@@ -2,6 +2,9 @@
 
 Adds MongoDB (via Mongoose) to an Express backend.
 
+> Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
+> Compile it to a distributable JSON with `xinit make plugins/mongodb/plugin.ts`.
+
 - **Depends on:** `express` (the connection is wired into `src/server.ts`).
 - **Conflicts with:** `prisma-sqlite` (pick one database layer).
 

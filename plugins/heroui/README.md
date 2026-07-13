@@ -2,6 +2,9 @@
 
 Adds **HeroUI v3** to a React + Tailwind v4 app.
 
+> Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
+> Compile it to a distributable JSON with `xinit make plugins/heroui/plugin.ts`.
+
 - **Applies to:** `framework: react`.
 - **Depends on:** `tailwind-v4`.
 - **Requires:** `react >=19`, `tailwindcss >=4` (checked, fails loudly if unmet).

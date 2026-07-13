@@ -73,6 +73,7 @@ export async function addPlugin(opts: AddPluginOptions): Promise<ApplyResult> {
   const plan = buildPlan(manifest.name, ctx.ops, opts.appDir, {
     trust,
     capabilities: manifest.capabilities,
+    warnings: ctx.warnings,
   });
 
   // --- consent handshake (SPEC §8): gate before touching disk ---
@@ -84,7 +85,7 @@ export async function addPlugin(opts: AddPluginOptions): Promise<ApplyResult> {
       created: [],
       modified: [],
       commands: plan.commands,
-      warnings: [],
+      warnings: [...plan.warnings],
       confirmToken: plan.confirmToken,
       plan,
     };
@@ -98,7 +99,9 @@ export async function addPlugin(opts: AddPluginOptions): Promise<ApplyResult> {
 }
 
 // --- public surface ---------------------------------------------------------
+export { definePlugin, pluginMake, type PluginDefinition } from "./define.js";
 export { pack } from "./pack.js";
+export { readManifestFacts, isPluginDir } from "./facts.js";
 export {
   loadPluginFromDir,
   loadPluginPacked,

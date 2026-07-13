@@ -6,6 +6,7 @@
 import * as fs from "node:fs";
 import * as path from "node:path";
 import type { PluginManifest } from "../types.js";
+import { readManifestFacts } from "./facts.js";
 
 export interface RegistryEntry {
   name: string;
@@ -15,7 +16,11 @@ export interface RegistryEntry {
 
 export type Registry = Map<string, RegistryEntry>;
 
-/** Build a name → entry map for every `plugin.json` directly under `pluginsDir`. */
+/**
+ * Build a name → entry map for every authored plugin folder directly under
+ * `pluginsDir`. Both authored shapes are read: `plugin.json` (parsed) and a
+ * typed `plugin.ts` (bundled + evaluated for its facts — see facts.ts).
+ */
 export function loadRegistry(pluginsDir: string): Registry {
   const registry: Registry = new Map();
   let entries: fs.Dirent[];
@@ -28,15 +33,12 @@ export function loadRegistry(pluginsDir: string): Registry {
   for (const entry of entries) {
     if (!entry.isDirectory()) continue;
     const dir = path.join(pluginsDir, entry.name);
-    const manifestPath = path.join(dir, "plugin.json");
-    if (!fs.existsSync(manifestPath)) continue;
     try {
-      const manifest = JSON.parse(
-        fs.readFileSync(manifestPath, "utf8"),
-      ) as PluginManifest;
+      const manifest = readManifestFacts(dir);
+      if (!manifest) continue;
       registry.set(manifest.name, { name: manifest.name, dir, manifest });
     } catch {
-      // Skip malformed manifests — fail loud only when one is actually needed.
+      // Skip malformed/unreadable manifests — fail loud only when one is needed.
     }
   }
   return registry;
