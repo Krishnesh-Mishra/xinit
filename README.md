@@ -50,7 +50,7 @@ every byte is restored.
 
 ## Status
 
-**v1 implemented** — engine + CLI + MCP server + typed authoring SDK + **31 first-party plugins** (JS/TS **and** Python), 176 tests green. Scope is intentionally small and honest:
+**v1 implemented** — engine + CLI + MCP server + typed authoring SDK + a guided create wizard + **42 first-party plugins** (JS/TS **and** Python), 204 tests green. Scope is intentionally small and honest:
 
 | Area | v1 | Later |
 | --- | --- | --- |
@@ -79,7 +79,7 @@ packages/
   mcp/         MCP tools + consent handshake                  (a thin skin)
   plugin-sdk/  types + helpers for plugin authors
 plugins/
-  31 first-party plugins (JS + Python: frameworks, backends, UI, data, mobile, infra)
+  42 first-party plugins (JS + Python: frameworks, backends, UI, data, services, infra)
 ```
 
 ## It already speaks 31 stacks
@@ -92,11 +92,13 @@ the exact same deterministic way.
 | --- | --- |
 | Frameworks | `react` · `nextjs` · `vue` · `sveltekit` · `react-native-expo` |
 | Backend | `express` · `nestjs` · `fastify` · `hono` · `bun` |
-| Realtime | `ws` · `socketio` |
 | UI / styling | `tailwind-v4` · `shadcn` · `heroui` · `heroui-native` · `uniwind` · `mui` · `chakra` |
-| State / data | `zustand` · `tanstack-query` · `mongodb` · `prisma` · `drizzle` · `redis` |
-| Infra | `docker` |
-| Python | `uv` · `python-dotenv` · `ruff` · `fastapi` · `django` |
+| State | `zustand` · `tanstack-query` |
+| Data / storage | `mongodb` · `postgres` · `prisma` · `drizzle` · `redis` · `s3` *(postgres/redis/s3 work in Python too)* |
+| Realtime | `ws` · `socketio` |
+| Services | `better-auth` · `supabase` · `stripe` · `trpc` |
+| Tooling | `biome` · `vitest` · `docker` |
+| Python | `uv` · `python-dotenv` · `ruff` · `fastapi` · `django` · `sqlalchemy` · `pytest` · `celery` |
 
 Adding one is a ~20-line typed file — see the [authoring guide](./docs/authoring-plugins.md).
 
@@ -227,7 +229,7 @@ Tools: `detect_project`, `list_plugins`, `search_plugins`, `add_plugin`,
 ```bash
 pnpm install
 pnpm build       # all packages
-pnpm test        # 176 tests across core / cli / mcp
+pnpm test        # 204 tests across core / cli / mcp
 pnpm typecheck
 ```
 
