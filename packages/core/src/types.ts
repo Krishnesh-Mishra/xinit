@@ -138,14 +138,35 @@ export interface EnsureLineOpts {
 }
 
 export interface Ctx {
+  /** Absolute path to the app being modified (selected app in a monorepo, else project root). All relative paths you pass to `ctx` resolve against this. */
   readonly appDir: string;
+  /** Absolute path to the monorepo root; equals `appDir` for single-app projects. Use for root-level files (root `package.json`, `turbo.json`). */
   readonly repoRoot: string;
+  /** Prompt answers keyed by prompt `id` (same object passed to `setup`'s second arg). */
   readonly answers: Answers;
 
-  // READS — run immediately; setup() may branch on the result.
+  // ── READS — run immediately; branch on the result ────────────────────────
+
+  /**
+   * Whether `path` (relative to `appDir`) exists on disk.
+   * @example if (!ctx.exists("tsconfig.json")) ctx.addFile("tsconfig.json", "{}\n");
+   */
   exists(path: string): boolean;
+  /**
+   * Parse a JSON file relative to `appDir`; `null` if missing or invalid.
+   * @example const pkg = ctx.readJson("package.json") as { dependencies?: Record<string, string> } | null;
+   */
   readJson(path: string): unknown | null;
+  /**
+   * Read a text file relative to `appDir`; `null` if missing.
+   * @example const css = ctx.readText("src/index.css") ?? "";
+   */
   readText(path: string): string | null;
+  /**
+   * Ask the user a question and await the answer. Side-effect-free, so safe for
+   * conditional/follow-up questions; returns the prompt `default` under `--silent`.
+   * @example const useIcons = await ctx.prompt({ id: "icons", type: "confirm", message: "Install icons?", default: true });
+   */
   prompt(p: Prompt): Promise<unknown>;
 
   // SEMANTIC RESOLVERS (reads) — inspect disk immediately relative to appDir.
