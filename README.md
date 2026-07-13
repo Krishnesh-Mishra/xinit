@@ -1,41 +1,52 @@
 # XInit
 
-**A deterministic, AI-native project operations engine.**
+**The deterministic hands your AI agent uses to touch your project.**
 
-> Version 1.0.0
+> Version 1.0.0 · MCP-first · [full docs](./docs)
 
-XInit is not "another project generator." It's an engine that **understands an
-existing project and safely evolves it** — installing dependencies, patching
-config files, and generating code to correctly integrate a technology, as one
-idempotent, reversible operation. The same core is driven three ways:
+Your coding agent is brilliant at deciding *what* to do and unreliable at *doing
+it the same way twice*. Ask it to "add HeroUI" and it searches docs, guesses, and
+maybe pastes HeroUI **v2**'s `HeroUIProvider` that **v3 deleted** — and if step 4
+fails, you're left with a half-migrated project to untangle by hand.
 
-- **Humans** — an interactive wizard (`xinit`)
-- **Scripts / CI** — deterministic commands with `--json` / `--silent`
-- **AI agents** — an MCP server that Claude Code, Codex, Cursor, etc. can call
-
-The unit of work is a **plugin**: a scripted, idempotent transformation that
-does the whole job of adding a technology — *install the deps **and** patch the
-config **and** generate the starter code.*
+XInit is the tool the agent calls instead. Adding a technology is **one
+deterministic operation** — install the deps **and** patch every config **and**
+generate the code — and if *anything* fails, it **rolls the whole thing back** to
+exactly where you started.
 
 ```
-shadcn  = write components.json + patch CSS + add @/* alias + run the CLI
-mongodb = install mongoose + write .env + src/config/mongo.ts + wire it into server.ts
-heroui  = install @heroui/* + add the tailwind vite plugin + fix CSS import order
+agent: "add mongodb to the api"
+  → xinit add_plugin("mongodb")
+      install mongoose · write .env · src/config/mongo.ts · wire server.ts
+      ✗ npm install failed
+      ↩ rolled back — every file restored, nothing left behind
 ```
 
-## Why it exists (in an AI-agent world)
+**That rollback is the whole point.** It's what makes it safe to let an
+autonomous agent modify your codebase: the worst case is a clean no-op, never a
+broken tree. Same input → same result, every time.
 
-An AI agent adding HeroUI today searches docs, guesses, and *maybe* forgets a
-config line — it's non-deterministic, and its knowledge can be stale (it might
-paste HeroUI **v2**'s `HeroUIProvider`, which **v3 removed**). XInit's moat is
-**not** "it knows the steps" — a docs-augmented AI can learn those. The moat is
-what an AI *still* can't guarantee on its own:
+## Three ways in, one engine
 
-- **Determinism & idempotency** — run it twice, get the same result; no duplicates.
-- **Transactional safety** — snapshot → apply → **roll back** on any failure.
-- **Machine-readable project state** — `xinit detect --json` instead of reading 50 files.
+- **AI agents** *(the main event)* — an **MCP server**: `detect_project`,
+  `add_plugin`, `doctor`. A risky op (exec/network) returns a dry-run plan plus a
+  `confirmToken` the agent must echo back before anything touches disk.
+- **You** — `xinit add heroui`, an interactive wizard, or a plan you approve.
+- **Scripts / CI** — `--json` / `--silent`, deterministic exit codes.
 
-So XInit is designed to be **the tool the agent calls**, not a competitor to it.
+## Why it isn't "just another scaffolder"
+
+`create-next-app` runs once and walks away; a docs-augmented AI can already learn
+the steps. XInit's moat is the part neither gives you — and the part an autonomous
+agent actually needs to be trusted:
+
+- **Idempotency** — run it twice, get the same result; no duplicated imports.
+- **Transactional rollback** — snapshot → apply → **restore on any failure**.
+- **Machine-readable project state** — `detect --json` instead of reading 50 files.
+
+It's proven end-to-end: the test suite adds HeroUI to a real project, asserts the
+exact CSS import order, re-runs it as a no-op, and forces a failure to confirm
+every byte is restored.
 
 ## Status
 
@@ -71,7 +82,11 @@ plugins/
   31 first-party plugins (JS + Python: frameworks, backends, UI, data, mobile, infra)
 ```
 
-## First-party plugins (v1)
+## It already speaks 31 stacks
+
+Breadth here is *evidence the engine generalizes* — not the reason to use it. The
+point isn't the count; it's that **every** one installs, patches, and rolls back
+the exact same deterministic way.
 
 | Group | Plugins |
 | --- | --- |
@@ -83,8 +98,7 @@ plugins/
 | Infra | `docker` |
 | Python | `uv` · `python-dotenv` · `ruff` · `fastapi` · `django` |
 
-Each is a typed, single-file plugin — install + config-patch + codegen as one
-idempotent, reversible operation. More are easy to add (see below).
+Adding one is a ~20-line typed file — see the [authoring guide](./docs/authoring-plugins.md).
 
 ## Using plugins
 
