@@ -4,7 +4,7 @@ Adds an Express + TypeScript backend, run with `tsx`. Applies to `node-backend`
 projects.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/express/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/express/plugin.ts`.
 
 ## Prompts
 

@@ -11,8 +11,8 @@ let work: string;
 let snapshotBase: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-tx-test-${randomUUID()}`);
-  snapshotBase = path.join(os.tmpdir(), `xinit-tx-snap-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-tx-test-${randomUUID()}`);
+  snapshotBase = path.join(os.tmpdir(), `initup-tx-snap-${randomUUID()}`);
   await fs.mkdir(work, { recursive: true });
   await fs.mkdir(snapshotBase, { recursive: true });
 });

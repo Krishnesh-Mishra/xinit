@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { PluginManifest } from "@xinit/core";
+import type { PluginManifest } from "@initup/core";
 
 import { pluginAppliesToApp } from "./plugins.js";
 

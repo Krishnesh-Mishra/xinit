@@ -22,7 +22,7 @@ const VITE_CONFIG =
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-typed-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-typed-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
 });
 
@@ -54,7 +54,7 @@ describe("typed plugin — make + addPlugin end-to-end", () => {
   it("packs the typed heroui plugin.ts and applies it (tailwind before heroui)", async () => {
     await makeViteProject(work);
 
-    // `xinit make` packs a typed `plugin.ts` FILE → distributable manifest whose
+    // `initup make` packs a typed `plugin.ts` FILE → distributable manifest whose
     // `setup` is the bundled definition OBJECT (not a bare function).
     const manifest = await pack(HEROUI_TS);
     expect(manifest.name).toBe("heroui");
@@ -105,12 +105,12 @@ describe("typed plugin — make + addPlugin end-to-end", () => {
 
 describe("ctx.warn — manual steps surface in ApplyResult.warnings", () => {
   it("a typed plugin that warns reports the message on success", async () => {
-    // A typed plugin authored against the `xinit` SDK id (external + shimmed).
+    // A typed plugin authored against the `initup` SDK id (external + shimmed).
     const pluginDir = path.join(work, "warnly");
     await fsp.mkdir(pluginDir, { recursive: true });
     await fsp.writeFile(
       path.join(pluginDir, "plugin.ts"),
-      `import { definePlugin } from "xinit";
+      `import { definePlugin } from "initup";
 export default definePlugin({
   name: "warnly",
   displayName: "Warnly",

@@ -28,7 +28,7 @@ here is a commitment; it's a parking lot.
 - **Deep Python source surgery** — needs a Python-side AST (LibCST) or a sidecar
   Python process; Node can't do it well. v1 stays at `pyproject.toml` + files +
   commands.
-- **Standalone binaries** — ship XInit without requiring Node, for Python/C++
+- **Standalone binaries** — ship initup without requiring Node, for Python/C++
   audiences who may not have Node installed.
 
 ## Interfaces
@@ -36,7 +36,7 @@ here is a commitment; it's a parking lot.
 - **Richer `graph`** / `explain` outputs, project visualizations.
 
 ## Ecosystem
-- Community plugin publishing UX, ratings/search (`xinit search auth`), a real
+- Community plugin publishing UX, ratings/search (`initup search auth`), a real
   registry backend. The cold-start problem (worthless with 5 plugins, needs
   hundreds kept current) is the core business risk — addressed by making
   authoring + publishing trivial, not by us writing every plugin.

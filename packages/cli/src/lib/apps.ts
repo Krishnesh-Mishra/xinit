@@ -1,7 +1,7 @@
 import * as path from "node:path";
 
 import { isCancel, select } from "@clack/prompts";
-import type { DetectedApp, Project } from "@xinit/core";
+import type { DetectedApp, Project } from "@initup/core";
 
 import { CancelledError } from "./prompts.js";
 

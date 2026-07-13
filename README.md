@@ -1,4 +1,4 @@
-# XInit
+# initup
 
 **The deterministic hands your AI agent uses to touch your project.**
 
@@ -9,14 +9,14 @@ it the same way twice*. Ask it to "add HeroUI" and it searches docs, guesses, an
 maybe pastes HeroUI **v2**'s `HeroUIProvider` that **v3 deleted** — and if step 4
 fails, you're left with a half-migrated project to untangle by hand.
 
-XInit is the tool the agent calls instead. Adding a technology is **one
+initup is the tool the agent calls instead. Adding a technology is **one
 deterministic operation** — install the deps **and** patch every config **and**
 generate the code — and if *anything* fails, it **rolls the whole thing back** to
 exactly where you started.
 
 ```
 agent: "add mongodb to the api"
-  → xinit add_plugin("mongodb")
+  → initup add_plugin("mongodb")
       install mongoose · write .env · src/config/mongo.ts · wire server.ts
       ✗ npm install failed
       ↩ rolled back — every file restored, nothing left behind
@@ -31,13 +31,13 @@ broken tree. Same input → same result, every time.
 - **AI agents** *(the main event)* — an **MCP server**: `detect_project`,
   `add_plugin`, `doctor`. A risky op (exec/network) returns a dry-run plan plus a
   `confirmToken` the agent must echo back before anything touches disk.
-- **You** — `xinit add heroui`, an interactive wizard, or a plan you approve.
+- **You** — `initup add heroui`, an interactive wizard, or a plan you approve.
 - **Scripts / CI** — `--json` / `--silent`, deterministic exit codes.
 
 ## Why it isn't "just another scaffolder"
 
 `create-next-app` runs once and walks away; a docs-augmented AI can already learn
-the steps. XInit's moat is the part neither gives you — and the part an autonomous
+the steps. initup's moat is the part neither gives you — and the part an autonomous
 agent actually needs to be trusted:
 
 - **Idempotency** — run it twice, get the same result; no duplicated imports.
@@ -65,7 +65,7 @@ See [`SPEC.md`](./SPEC.md) for the frozen v1 architecture and
 ## Architecture (one core, many front-ends)
 
 ```
-                 xinit-core  (no printing, no prompts — pure API + events)
+                 initup-core  (no printing, no prompts — pure API + events)
                 /     |      \
              CLI     MCP    (REST later)
               |       |         |
@@ -106,22 +106,22 @@ Build the workspace once (`pnpm install && pnpm build`), then add any plugin to
 the app in the current directory:
 
 ```bash
-xinit add heroui                 # a first-party plugin by name
-xinit add ./plugins/mongodb      # a local authored folder or plugin.ts
-xinit add ./heroui.json          # a packed single-JSON (e.g. pasted from a link)
-xinit add heroui --app web       # target one app in a monorepo
+initup add heroui                 # a first-party plugin by name
+initup add ./plugins/mongodb      # a local authored folder or plugin.ts
+initup add ./heroui.json          # a packed single-JSON (e.g. pasted from a link)
+initup add heroui --app web       # target one app in a monorepo
 ```
 
 **Trust tiers.** First-party plugins (bundled by name) run immediately. A
 third-party plugin (local path or pasted link) that only installs/patches files
 also runs, but any plugin that needs `exec` or `network` hits a **consent gate**:
-XInit computes the dry-run **Plan** and asks you to approve it before anything
+initup computes the dry-run **Plan** and asks you to approve it before anything
 touches disk. Approve non-interactively with `--yes`.
 
 ```bash
-xinit add shadcn --yes           # auto-approve the consent gate
-xinit add heroui --json          # stdout is pure JSON (for scripts/agents)
-xinit add heroui --silent        # no prompts; use prompt defaults
+initup add shadcn --yes           # auto-approve the consent gate
+initup add heroui --json          # stdout is pure JSON (for scripts/agents)
+initup add heroui --silent        # no prompts; use prompt defaults
 ```
 
 **Via MCP** — point Claude Code / Codex / Cursor at the server and the agent
@@ -142,13 +142,13 @@ react/
   files/         templates to copy
 ```
 
-`xinit pack ./react` bundles it into `react.json` (code inlined as a string,
+`initup pack ./react` bundles it into `react.json` (code inlined as a string,
 templates inlined too). The rule that keeps it sane:
 
 > **JSON holds facts. Code holds logic.**
 
 Inside `setup.ts` you get a small, safe `ctx` toolbox (`copy`, `install`,
-`ensureLine`, `patchConfig`, …). Every effect is **recorded** so XInit can show a
+`ensureLine`, `patchConfig`, …). Every effect is **recorded** so initup can show a
 dry-run plan and roll back. Pure computation is free; every real-world effect
 (files, installs, exec, network) is a **declared capability**, shown in the plan,
 and gated by consent.
@@ -159,7 +159,7 @@ The recommended form is a single typed file, `plugins/<name>/plugin.ts`, that
 default-exports `definePlugin({ ...facts, setup })`:
 
 ```ts
-import { definePlugin } from "@xinit/core"; // "xinit" also works
+import { definePlugin } from "@initup/core"; // "initup" also works
 
 export default definePlugin({
   name: "tailwind-v4",
@@ -185,7 +185,7 @@ export default definePlugin({
 Compile it into a distributable single JSON:
 
 ```bash
-xinit make plugins/tailwind-v4/plugin.ts   # → tailwind-v4.json
+initup make plugins/tailwind-v4/plugin.ts   # → tailwind-v4.json
 ```
 
 → Full guide: [`docs/authoring-plugins.md`](./docs/authoring-plugins.md), with the
@@ -201,12 +201,12 @@ pnpm build
 **CLI**
 
 ```bash
-xinit detect [--json]          # fingerprint the project
-xinit add heroui [--app web]   # install + patch + generate, transactionally
-xinit manage                   # interactive: app → plugin
-xinit create                   # scaffold a new React app
-xinit doctor [--json]          # report project health (v1: report-only)
-xinit pack ./plugins/heroui    # author folder → single distributable JSON
+initup detect [--json]          # fingerprint the project
+initup add heroui [--app web]   # install + patch + generate, transactionally
+initup manage                   # interactive: app → plugin
+initup create                   # scaffold a new React app
+initup doctor [--json]          # report project health (v1: report-only)
+initup pack ./plugins/heroui    # author folder → single distributable JSON
 ```
 
 `--json` keeps stdout pure JSON (for scripts/agents), `--silent` skips prompts
@@ -215,7 +215,7 @@ xinit pack ./plugins/heroui    # author folder → single distributable JSON
 **MCP server** (for Claude Code / Codex / Cursor)
 
 ```bash
-claude mcp add xinit -- node /path/to/xinit/packages/mcp/dist/index.js
+claude mcp add initup -- node /path/to/initup/packages/mcp/dist/index.js
 ```
 
 Tools: `detect_project`, `list_plugins`, `search_plugins`, `add_plugin`,
@@ -231,7 +231,7 @@ pnpm test        # 176 tests across core / cli / mcp
 pnpm typecheck
 ```
 
-Monorepo: `@xinit/core` (engine) · `xinit` (CLI) · `@xinit/mcp` (server) ·
+Monorepo: `@initup/core` (engine) · `initup` (CLI) · `@initup/mcp` (server) ·
 `plugins/*` (reference plugins). See [`SPEC.md`](./SPEC.md) for the frozen
 architecture.
 

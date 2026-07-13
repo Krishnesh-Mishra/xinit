@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-python-dotenv",
+  "name": "@initup/plugin-python-dotenv",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: python-dotenv env loading.",
+  "description": "initup plugin: python-dotenv env loading.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

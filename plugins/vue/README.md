@@ -5,7 +5,7 @@ Scaffolds a new **Vue (Vite)** app by wrapping the official
 (`npm create vue@latest`) non-interactively.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/vue/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/vue/plugin.ts`.
 
 - **Applies to:** `type: new-app`.
 - **Languages:** `ts`, `js`.

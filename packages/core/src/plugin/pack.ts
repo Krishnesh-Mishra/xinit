@@ -11,7 +11,7 @@
  * template under `files/` base64-encoded.
  *
  * The typed form bundles `plugin.ts` with esbuild while marking the authoring
- * SDK (`xinit`, `@xinit/core`, `@xinit/core/*`) EXTERNAL, then evaluates the
+ * SDK (`initup`, `@initup/core`, `@initup/core/*`) EXTERNAL, then evaluates the
  * bundle behind the sandbox shim to read its facts. The stored `setup` string is
  * that same bundle, whose default export is the definition OBJECT (`.setup`).
  */
@@ -20,7 +20,7 @@ import * as path from "node:path";
 import * as esbuild from "esbuild";
 import type { PluginManifest } from "../types.js";
 import {
-  XINIT_EXTERNALS,
+  initup_EXTERNALS,
   definitionObject,
   evalModule,
   factsFromDefinition,
@@ -50,7 +50,7 @@ async function bundle(entryFile: string): Promise<string> {
     write: false,
     // The authoring SDK is type-only (old form) or shimmed at eval (typed form);
     // keep it external so esbuild never inlines the whole toolchain.
-    external: XINIT_EXTERNALS,
+    external: initup_EXTERNALS,
     logLevel: "silent",
   });
   return result.outputFiles[0]!.text;

@@ -3,7 +3,7 @@
 Adds **Prisma ORM** to an existing Node backend.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/prisma/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/prisma/plugin.ts`.
 
 - **Applies to:** `type: node-backend`.
 - **Detect:** file `prisma/schema.prisma`.

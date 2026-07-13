@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * HeroUI v3 for React + Tailwind v4.

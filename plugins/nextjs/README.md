@@ -5,7 +5,7 @@ Scaffolds a new **Next.js** app by wrapping the official
 CLI non-interactively.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/nextjs/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/nextjs/plugin.ts`.
 
 - **Applies to:** `type: new-app`.
 - **Languages:** `ts`, `js`.

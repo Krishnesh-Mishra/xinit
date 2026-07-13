@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-nextjs",
+  "name": "@initup/plugin-nextjs",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Next.js base scaffold via create-next-app.",
+  "description": "initup plugin: Next.js base scaffold via create-next-app.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

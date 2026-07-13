@@ -1,5 +1,5 @@
 /**
- * XInit core contracts (frozen for v1 — see SPEC.md).
+ * initup core contracts (frozen for v1 — see SPEC.md).
  *
  * These types are the seam between subsystems (detect, patch, tx, plugin
  * runtime) and the front-ends (cli, mcp). Implementations depend on these
@@ -76,7 +76,7 @@ export interface PluginManifest {
   detect?: DetectRule;
   prompts?: Prompt[];
 
-  // --- packed-artifact fields (present only after `xinit pack`) ---
+  // --- packed-artifact fields (present only after `initup pack`) ---
   /** path (relative to plugin root) -> base64 file content. */
   files?: Record<string, string>;
   /** bundled setup() source as a string (esbuild output). */

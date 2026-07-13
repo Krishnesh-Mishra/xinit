@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * Material UI (MUI v7) for a React app.

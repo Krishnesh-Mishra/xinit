@@ -4,7 +4,7 @@ Adds a [Socket.IO](https://socket.io) server (with an optional browser client)
 to a Node backend.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit pack plugins/socketio`.
+> Compile it to a distributable JSON with `initup pack plugins/socketio`.
 
 - **Applies to:** `node-backend` apps (`ts` / `js`).
 - Add-to-existing modifier; works with any HTTP framework.

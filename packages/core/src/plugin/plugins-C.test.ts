@@ -29,7 +29,7 @@ const DOCKER_DIR = path.join(PLUGINS, "docker");
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-c-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-c-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
 });
 

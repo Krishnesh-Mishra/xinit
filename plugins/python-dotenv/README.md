@@ -3,7 +3,7 @@
 Adds **python-dotenv** to a Python app and wires `.env` loading into the entry.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/python-dotenv/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/python-dotenv/plugin.ts`.
 
 - **Applies to:** any Python app (no framework restriction).
 - **Languages:** `python`.

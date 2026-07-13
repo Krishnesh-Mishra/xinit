@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-hono",
+  "name": "@initup/plugin-hono",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Hono backend for node, bun, or cloudflare.",
+  "description": "initup plugin: Hono backend for node, bun, or cloudflare.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

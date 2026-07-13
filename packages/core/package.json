@@ -1,7 +1,7 @@
 {
-  "name": "@xinit/core",
+  "name": "@initup/core",
   "version": "1.0.0",
-  "description": "XInit core engine — detect, patch, transaction, plugin runtime",
+  "description": "initup core engine — detect, patch, transaction, plugin runtime",
   "license": "MIT",
   "author": "Krishnesh Mishra",
   "type": "module",

@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * HeroUI Native for React Native / Expo (built on Uniwind + Tailwind v4).
@@ -8,7 +8,7 @@ import { definePlugin } from "@xinit/core";
  * package, a specific set of pinned peer dependencies, three CSS `@import`s in a
  * LOAD-BEARING order (tailwindcss → uniwind → heroui-native), and two provider
  * wrappers around the app root (outermost GestureHandlerRootView, then
- * HeroUINativeProvider). XInit records all of it deterministically.
+ * HeroUINativeProvider). initup records all of it deterministically.
  *
  * Capabilities: install only (no exec, no network). Provider wiring that older
  * (v3-style) guides tell you to do by hand is automated by `ctx.wrap`, which

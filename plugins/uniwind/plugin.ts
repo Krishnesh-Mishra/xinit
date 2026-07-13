@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * Uniwind — the fastest Tailwind CSS bindings for React Native (Tailwind v4).

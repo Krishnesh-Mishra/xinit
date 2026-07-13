@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-mongodb",
+  "name": "@initup/plugin-mongodb",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit reference plugin: MongoDB via Mongoose.",
+  "description": "initup reference plugin: MongoDB via Mongoose.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

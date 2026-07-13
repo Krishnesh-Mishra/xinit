@@ -1,4 +1,4 @@
-# XInit — v1 Specification (frozen)
+# initup — v1 Specification (frozen)
 
 This document is the **frozen v1 contract**. New ideas go in [`FUTURE.md`](./FUTURE.md),
 not here. The point of freezing is to ship a stable first release instead of
@@ -6,7 +6,7 @@ chasing scope.
 
 ---
 
-## 1. What XInit is
+## 1. What initup is
 
 A **deterministic project operations engine**. It detects a project and safely
 mutates it (add/configure a technology) as an idempotent, reversible operation.
@@ -88,7 +88,7 @@ myplugin/
   files/         templates to copy.
 ```
 
-`xinit pack ./myplugin` → `myplugin.json`:
+`initup pack ./myplugin` → `myplugin.json`:
 - bundles `setup.ts` with esbuild (inlines local imports) → `setup` string
 - base64-encodes `files/` → `files` map
 
@@ -308,14 +308,14 @@ open third-party plugins run unattended. Tracked in `FUTURE.md`.)
 
 ### CLI
 ```
-xinit                      # detect + interactive wizard
-xinit create [template]    # scaffold new project/app
-xinit detect  [--json]     # print Project model
-xinit add <plugin> [--json] [--silent] [--yes]
-xinit manage               # manage apps → app → plugins  (add/configure; no remove in v1)
-xinit doctor  [--json]     # report drift vs manifest (does NOT fix in v1)
-xinit pack <dir>           # author folder → single distributable JSON
-xinit make <entry>         # compile a typed plugin.ts → single distributable JSON
+initup                      # detect + interactive wizard
+initup create [template]    # scaffold new project/app
+initup detect  [--json]     # print Project model
+initup add <plugin> [--json] [--silent] [--yes]
+initup manage               # manage apps → app → plugins  (add/configure; no remove in v1)
+initup doctor  [--json]     # report drift vs manifest (does NOT fix in v1)
+initup pack <dir>           # author folder → single distributable JSON
+initup make <entry>         # compile a typed plugin.ts → single distributable JSON
 ```
 (A dependency-graph view is exposed via the MCP `get_graph` tool, not a CLI command.)
 Navigation (wizard): repo → (Manage Apps | Manage Packages) → app →
@@ -360,7 +360,7 @@ prompts are collected before a single consolidated Plan + one consent.
   resolve the app entry (`main.py`, `app.py`, `src/main.py`, `__main__.py`,
   `manage.py`) with a Python-aware `ctx.entryFile()`; `ctx.configFile("pyproject")`;
   plus `setEnv`, `ensureLine`, `copy`, and `run`. **No `.py` source AST surgery**
-  in v1 (no good Node-side Python AST); documented limitation. Note: XInit is a
+  in v1 (no good Node-side Python AST); documented limitation. Note: initup is a
   Node CLI — standalone binaries for non-Node audiences are a `FUTURE.md` item.
 
 ## 11. Non-goals for v1 (see FUTURE.md)

@@ -3,7 +3,7 @@
 Adds a minimal **FastAPI** web API skeleton to a Python app.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/fastapi/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/fastapi/plugin.ts`.
 
 - **Applies to:** `framework: fastapi` (also usable when scaffolding a new app).
 - **Languages:** `python`.

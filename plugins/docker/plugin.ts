@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * Docker support — a pure file plugin (no npm, no exec, no network).

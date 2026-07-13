@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-mui",
+  "name": "@initup/plugin-mui",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Material UI (MUI).",
+  "description": "initup plugin: Material UI (MUI).",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

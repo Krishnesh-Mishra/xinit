@@ -18,7 +18,7 @@ import type { PluginManifest } from "../types.js";
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-wrap-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-wrap-${randomUUID()}`);
   await fsp.mkdir(path.join(work, "src"), { recursive: true });
 });
 afterEach(async () => {

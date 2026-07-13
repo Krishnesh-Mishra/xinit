@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * SvelteKit base scaffold — a thin, non-interactive wrapper over the official
@@ -8,7 +8,7 @@ import { definePlugin } from "@xinit/core";
  * definitions over the network, so this plugin declares `exec` + `network`. It
  * is invoked with `--no-install`, so it does NOT install dependencies
  * (`install` is false) and a `ctx.warn` reminds the user to install afterward.
- * `--no-dir-check` lets it scaffold into an app dir xinit already created.
+ * `--no-dir-check` lets it scaffold into an app dir initup already created.
  */
 export default definePlugin({
   name: "sveltekit",

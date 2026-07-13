@@ -6,7 +6,7 @@ export interface IOOptions {
 }
 
 /**
- * Output router that enforces XInit's stdout discipline (SPEC §8):
+ * Output router that enforces initup's stdout discipline (SPEC §8):
  *
  * - In `--json` mode, **stdout carries ONLY the machine-readable result**. Every
  *   line of human text, progress and prompt UI is sent to stderr, so a log line

@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-prisma",
+  "name": "@initup/plugin-prisma",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Prisma ORM.",
+  "description": "initup plugin: Prisma ORM.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

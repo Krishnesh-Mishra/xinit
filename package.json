@@ -1,8 +1,8 @@
 {
-  "name": "xinit-monorepo",
+  "name": "initup-monorepo",
   "version": "1.0.0",
   "private": true,
-  "description": "XInit — a deterministic, AI-native project operations engine",
+  "description": "initup — a deterministic, AI-native project operations engine",
   "license": "MIT",
   "author": "Krishnesh Mishra",
   "type": "module",

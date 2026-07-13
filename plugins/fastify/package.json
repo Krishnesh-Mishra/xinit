@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-fastify",
+  "name": "@initup/plugin-fastify",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Fastify + tsx backend.",
+  "description": "initup plugin: Fastify + tsx backend.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

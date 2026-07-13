@@ -4,7 +4,7 @@ Adds a Redis client (via [`ioredis`](https://github.com/redis/ioredis)) to a
 Node backend.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit pack plugins/redis`.
+> Compile it to a distributable JSON with `initup pack plugins/redis`.
 
 - **Applies to:** `node-backend` apps (`ts` / `js`).
 - Add-to-existing modifier; works with any HTTP framework.

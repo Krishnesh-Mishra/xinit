@@ -22,7 +22,7 @@ const REDIS_DIR = path.join(REPO_ROOT, "plugins", "redis");
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-setenv-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-setenv-${randomUUID()}`);
   await fsp.mkdir(path.join(work, "src"), { recursive: true });
   await fsp.writeFile(
     path.join(work, "package.json"),

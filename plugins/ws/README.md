@@ -4,7 +4,7 @@ Adds WebSocket support (via the [`ws`](https://github.com/websockets/ws) library
 to a Node backend.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit pack plugins/ws`.
+> Compile it to a distributable JSON with `initup pack plugins/ws`.
 
 - **Applies to:** `node-backend` apps (`ts` / `js`).
 - Add-to-existing modifier; works with any HTTP framework.

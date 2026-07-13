@@ -24,7 +24,7 @@ const VITE_CONFIG =
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-m3-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-m3-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
 });
 

@@ -10,7 +10,7 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { isPluginDir, loadRegistry, type PluginManifest } from "@xinit/core";
+import { isPluginDir, loadRegistry, type PluginManifest } from "@initup/core";
 
 /** The manifest fields surfaced to an agent when it lists/searches plugins. */
 export interface PluginSummary {
@@ -28,12 +28,12 @@ export interface PluginSummary {
  * Locate the repo `plugins/` directory.
  *
  * Resolution order:
- *   1. `XINIT_PLUGINS_DIR` env override (deployments that relocate the plugins).
+ *   1. `initup_PLUGINS_DIR` env override (deployments that relocate the plugins).
  *   2. Walk up from this module looking for a `plugins/` folder that actually
  *      contains at least one `<name>/plugin.json` (the reference registry).
  */
 export function resolvePluginsDir(): string {
-  const override = process.env.XINIT_PLUGINS_DIR;
+  const override = process.env.initup_PLUGINS_DIR;
   if (override && isPluginsDir(override)) return path.resolve(override);
 
   let dir = path.dirname(fileURLToPath(import.meta.url));

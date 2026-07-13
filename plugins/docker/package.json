@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-docker",
+  "name": "@initup/plugin-docker",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Docker (Dockerfile, .dockerignore, optional compose).",
+  "description": "initup plugin: Docker (Dockerfile, .dockerignore, optional compose).",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

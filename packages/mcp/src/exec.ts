@@ -8,7 +8,7 @@
  */
 import { spawn } from "node:child_process";
 
-import { installCommands, type Installer, type Runner } from "@xinit/core";
+import { installCommands, type Installer, type Runner } from "@initup/core";
 
 /** Spawn a command through the platform shell, rejecting on a non-zero exit. */
 function shell(cmd: string, cwd: string): Promise<void> {

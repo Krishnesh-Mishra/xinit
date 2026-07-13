@@ -23,7 +23,7 @@ const DIR = (name: string) => path.join(PLUGINS, name);
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-E-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-E-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
 });
 afterEach(async () => {

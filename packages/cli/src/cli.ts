@@ -37,9 +37,9 @@ async function guard(jsonMode: boolean, fn: () => Promise<void>): Promise<void> 
   }
 }
 
-const cli = cac("xinit");
+const cli = cac("initup");
 
-// xinit / xinit detect — fingerprint the project.
+// initup / initup detect — fingerprint the project.
 cli
   .command("[dir]", "Detect the project (default)")
   .option("--json", "Output the Project model as JSON")
@@ -54,7 +54,7 @@ cli
     guard(!!options.json, () => detectCommand(process.cwd(), { json: options.json })),
   );
 
-// xinit add <plugin>
+// initup add <plugin>
 cli
   .command("add <plugin>", "Add/configure a plugin in an app")
   .option("--app <name>", "Target app (defaults to the single app, else prompts)")
@@ -88,7 +88,7 @@ cli
       }),
   );
 
-// xinit manage — interactive wizard.
+// initup manage — interactive wizard.
 cli
   .command("manage", "Interactively manage apps and their plugins")
   .option("--plugins-dir <dir>", "Directory of available plugins")
@@ -96,7 +96,7 @@ cli
     guard(false, () => runManage({ pluginsDir: options.pluginsDir })),
   );
 
-// xinit create [template]
+// initup create [template]
 cli
   .command("create [template]", "Scaffold a new app (v1: react)")
   .option("--dir <path>", "Target directory (default: cwd)")
@@ -127,7 +127,7 @@ cli
       }),
   );
 
-// xinit doctor
+// initup doctor
 cli
   .command("doctor", "Report project health (does not fix in v1)")
   .option("--json", "Output the report as JSON")
@@ -135,7 +135,7 @@ cli
     guard(!!options.json, () => runDoctor(process.cwd(), { json: options.json }).then(() => {})),
   );
 
-// xinit pack <dir>
+// initup pack <dir>
 cli
   .command("pack <dir>", "Pack a plugin folder into a single JSON")
   .option("--out <file>", "Output file (default: <name>.json)")
@@ -146,7 +146,7 @@ cli
     ),
   );
 
-// xinit make <entry> — compile a typed plugin.ts (or folder) → single JSON.
+// initup make <entry> — compile a typed plugin.ts (or folder) → single JSON.
 cli
   .command("make <entry>", "Compile a typed plugin.ts (or folder) into a single JSON")
   .option("--out <file>", "Output file (default: <name>.json)")

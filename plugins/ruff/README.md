@@ -3,7 +3,7 @@
 Adds **Ruff** (Python linter + formatter) and configures it in `pyproject.toml`.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/ruff/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/ruff/plugin.ts`.
 
 - **Applies to:** any Python app (no framework restriction).
 - **Languages:** `python`.

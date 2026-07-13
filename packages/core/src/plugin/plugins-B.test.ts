@@ -30,7 +30,7 @@ const BUN_DIR = path.join(PLUGINS, "bun");
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-plugB-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-plugB-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
 });
 

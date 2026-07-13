@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * Hono — the ultrafast Web-Standards framework, wired for the chosen runtime.

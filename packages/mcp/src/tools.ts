@@ -1,8 +1,8 @@
 /**
- * XInit MCP tool handlers (SPEC §8).
+ * initup MCP tool handlers (SPEC §8).
  *
  * Every handler is a thin, independently-testable async function that marshals
- * arguments into a single call to `@xinit/core` and returns a plain JSON result.
+ * arguments into a single call to `@initup/core` and returns a plain JSON result.
  * `registerTools` wraps each one for the MCP transport (JSON in the `content`
  * result, errors surfaced as `isError`). No business logic lives here — the core
  * owns determinism, idempotency, transactions and the consent gate.
@@ -20,7 +20,7 @@ import {
   type Project,
   type Runner,
   type Trust,
-} from "@xinit/core";
+} from "@initup/core";
 
 import {
   findBundledPluginDir,

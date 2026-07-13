@@ -4,7 +4,7 @@ Adds Docker support to a Node project — a **pure file plugin** (no npm install
 no exec, no network).
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit pack plugins/docker`.
+> Compile it to a distributable JSON with `initup pack plugins/docker`.
 
 - **Applies to:** `ts` / `js` projects (applies broadly — no framework restriction).
 

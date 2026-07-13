@@ -32,7 +32,7 @@ const MAIN_TSX =
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-plugins-d-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-plugins-d-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
 });
 

@@ -4,7 +4,7 @@ Adds a [Bun](https://bun.sh) runtime backend built on the native `Bun.serve`
 API — zero dependencies. Applies to `node-backend` projects.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit pack plugins/bun`.
+> Compile it to a distributable JSON with `initup pack plugins/bun`.
 
 ## Prompts
 

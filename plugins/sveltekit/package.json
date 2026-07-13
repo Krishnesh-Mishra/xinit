@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-sveltekit",
+  "name": "@initup/plugin-sveltekit",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: SvelteKit base scaffold via the Svelte CLI (sv create).",
+  "description": "initup plugin: SvelteKit base scaffold via the Svelte CLI (sv create).",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

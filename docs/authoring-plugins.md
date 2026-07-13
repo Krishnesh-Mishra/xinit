@@ -1,4 +1,4 @@
-# Authoring XInit plugins
+# Authoring initup plugins
 
 Everything you need to write a correct plugin — typed and grounded in the real
 API (`packages/core/src/plugin/define.ts`, `packages/core/src/types.ts`). Read
@@ -29,7 +29,7 @@ A plugin has two halves:
 - **Logic** — the actual transformation: plain code with plain `if`. This lives in
   `setup()`.
 
-XInit deliberately does **not** encode conditionals/loops/feature-selection as a
+initup deliberately does **not** encode conditionals/loops/feature-selection as a
 JSON DSL (`when`/`vars`/`features`). That path produces unreadable,
 permutation-heavy files. Options are `if` statements in `setup()` — linear in the
 number of options, not combinatorial.
@@ -48,7 +48,7 @@ get author-time IntelliSense and type-checking on every field and every `ctx`
 call. This is how all 31 first-party plugins are written.
 
 ```ts
-import { definePlugin } from "@xinit/core"; // the alias "xinit" also works
+import { definePlugin } from "@initup/core"; // the alias "initup" also works
 
 export default definePlugin({
   name: "tailwind-v4",
@@ -78,7 +78,7 @@ exported alias if it reads better for you.)
 Compile it:
 
 ```bash
-xinit make plugins/tailwind-v4/plugin.ts   # → tailwind-v4.json
+initup make plugins/tailwind-v4/plugin.ts   # → tailwind-v4.json
 ```
 
 ### B. Folder form — `plugin.json` + `setup.ts` + `files/`
@@ -106,7 +106,7 @@ myplugin/
 
 ```ts
 // setup.ts
-import type { Ctx, Answers } from "@xinit/core";
+import type { Ctx, Answers } from "@initup/core";
 
 export default async function setup(ctx: Ctx, answers: Answers): Promise<void> {
   ctx.install(["my-lib"]);
@@ -116,7 +116,7 @@ export default async function setup(ctx: Ctx, answers: Answers): Promise<void> {
 Compile it:
 
 ```bash
-xinit pack ./myplugin        # → myplugin.json
+initup pack ./myplugin        # → myplugin.json
 ```
 
 > Prefer the typed single file unless you have a reason not to — the type-checking
@@ -139,7 +139,7 @@ form). All the FACT fields are identical between the two forms; `schemaVersion`
 | `version` | `string` | — | Plugin version (semver). Conventionally `"1.0.0"`. |
 | `appliesTo` | `{ type?: string; framework?: string }` | — | Where this plugin can be applied. Omitted ⇒ applies anywhere. |
 | `languages` | `Language[]` (`"js"`\|`"ts"`\|`"python"`) | — | App languages supported. Omitted ⇒ universal; present ⇒ compatible only when the target app's `language` is in the list. |
-| `dependsOn` | `string[]` | — | Other plugins that must be present first; XInit offers to add missing ones (their prompts are gathered up front). |
+| `dependsOn` | `string[]` | — | Other plugins that must be present first; initup offers to add missing ones (their prompts are gathered up front). |
 | `conflicts` | `string[]` | — | Plugins that cannot coexist; resolution fails loudly if present. |
 | `requires` | `Record<string, string>` | — | Required versions of already-installed deps as semver ranges. Unmet ⇒ error. |
 | `capabilities` | `Capabilities` | ✅ | What the plugin is allowed to do: `{ install, exec, network }`, all `boolean`. Be honest — see below. |
@@ -198,7 +198,7 @@ languages: ["python"]     // uv, django
 
 ### `dependsOn`
 
-Names of other plugins that must be present first. XInit offers to add missing
+Names of other plugins that must be present first. initup offers to add missing
 ones, gathering all transitive prompts before a single consolidated Plan + one
 consent (SPEC §9). v1 resolves linearly.
 
@@ -376,8 +376,8 @@ code (e.g. Django's `settings.py` templated with the chosen project name).
 An authored plugin (either form) compiles to **one JSON**:
 
 ```bash
-xinit make plugins/heroui/plugin.ts    # typed single file → heroui.json
-xinit pack ./plugins/heroui            # folder form       → heroui.json
+initup make plugins/heroui/plugin.ts    # typed single file → heroui.json
+initup pack ./plugins/heroui            # folder form       → heroui.json
 ```
 
 The artifact carries:
@@ -388,7 +388,7 @@ The artifact carries:
 - `files` — a `{ "<path>": "<base64>" }` map of your `files/` templates.
 
 Distribute it by hosting the JSON anywhere and sharing a link. A consumer
-downloads it and runs `xinit add ./that-plugin.json`. It is plain text, so it can
+downloads it and runs `initup add ./that-plugin.json`. It is plain text, so it can
 be read/reviewed before running. Third-party plugins needing `exec`/`network` hit
 the consent gate on the consumer's machine (see
 [using-plugins.md](./using-plugins.md#the-dry-run-plan--consent-gate)).
@@ -503,7 +503,7 @@ branching, resolvers, and several write ops together.
 
 ```ts
 // plugins/zod-starter/plugin.ts
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 export default definePlugin({
   // ── FACTS ────────────────────────────────────────────────────────────────
@@ -564,8 +564,8 @@ export const env = EnvSchema.parse(import.meta.env);
 Compile and use it:
 
 ```bash
-xinit make plugins/zod-starter/plugin.ts   # → zod-starter.json
-xinit add ./zod-starter.json               # or: xinit add zod-starter (if in --plugins-dir)
+initup make plugins/zod-starter/plugin.ts   # → zod-starter.json
+initup add ./zod-starter.json               # or: initup add zod-starter (if in --plugins-dir)
 ```
 
 ---

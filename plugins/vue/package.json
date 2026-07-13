@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-vue",
+  "name": "@initup/plugin-vue",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Vue (Vite) base scaffold via create-vue.",
+  "description": "initup plugin: Vue (Vite) base scaffold via create-vue.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

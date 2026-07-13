@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * Bun runtime backend — a zero-dependency HTTP server on `Bun.serve`.
@@ -7,7 +7,7 @@ import { definePlugin } from "@xinit/core";
  * needs no packages at all, so this plugin installs nothing and runs nothing:
  * ALL capabilities are false (honest — SPEC §7). It only writes files and a dev
  * script, then surfaces a manual `bun install` step via `ctx.warn`, because Bun
- * itself may not be present on the machine and XInit must not try to run it.
+ * itself may not be present on the machine and initup must not try to run it.
  */
 export default definePlugin({
   name: "bun",

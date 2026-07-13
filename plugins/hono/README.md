@@ -5,7 +5,7 @@ runtime. Applies to `node-backend` projects. Fully deterministic and
 install-only.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit pack plugins/hono`.
+> Compile it to a distributable JSON with `initup pack plugins/hono`.
 
 ## Prompts
 

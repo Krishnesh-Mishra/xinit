@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-nestjs",
+  "name": "@initup/plugin-nestjs",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: NestJS backend via the official Nest CLI.",
+  "description": "initup plugin: NestJS backend via the official Nest CLI.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

@@ -2,12 +2,12 @@
  * `definePlugin` — the typed plugin authoring API (SPEC §4).
  *
  * An author writes ONE type-safe file instead of `plugin.json` + `setup.ts`:
- * a default-exported `definePlugin({ ...facts, setup })`. `xinit make` then packs
+ * a default-exported `definePlugin({ ...facts, setup })`. `initup make` then packs
  * that file into the same distributable JSON (`manifest facts` + bundled `setup`
  * string + base64 `files`).
  *
  * This module imports ONLY types so it stays dependency-free: at author time it
- * pulls in `@xinit/core` for types; at plugin-eval time `definePlugin` resolves
+ * pulls in `@initup/core` for types; at plugin-eval time `definePlugin` resolves
  * to a shimmed identity (see plugin/shim.ts), so importing it never drags the
  * toolchain into the bundled setup.
  */
@@ -48,7 +48,7 @@ export interface PluginDefinition {
    */
   languages?: Language[];
   /**
-   * Other plugins that must be present first; XInit offers to add missing ones.
+   * Other plugins that must be present first; initup offers to add missing ones.
    * @example ["tailwind-v4"]
    */
   dependsOn?: string[];
@@ -98,7 +98,7 @@ export interface PluginDefinition {
  *
  * @example A modifier plugin (adds a library to an existing React app):
  * ```ts
- * import { definePlugin } from "xinit"; // "@xinit/core" also works
+ * import { definePlugin } from "initup"; // "@initup/core" also works
  *
  * export default definePlugin({
  *   name: "tailwind-v4",
@@ -120,11 +120,11 @@ export interface PluginDefinition {
  *   },
  * });
  * ```
- * Compile it to a distributable JSON with `xinit make plugins/tailwind-v4/plugin.ts`.
+ * Compile it to a distributable JSON with `initup make plugins/tailwind-v4/plugin.ts`.
  */
 export function definePlugin<D extends PluginDefinition>(def: D): D {
   return def;
 }
 
-/** Alias — `import { pluginMake } from "xinit"` reads well for some authors. */
+/** Alias — `import { pluginMake } from "initup"` reads well for some authors. */
 export const pluginMake = definePlugin;

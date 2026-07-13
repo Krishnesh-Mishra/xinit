@@ -21,7 +21,7 @@ const MONGODB_DIR = path.join(REPO_ROOT, "plugins", "mongodb");
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-mongodb-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-mongodb-${randomUUID()}`);
   await fsp.mkdir(path.join(work, "src"), { recursive: true });
   await fsp.writeFile(
     path.join(work, "package.json"),

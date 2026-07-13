@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-react-native-expo",
+  "name": "@initup/plugin-react-native-expo",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: React Native (Expo) base scaffold.",
+  "description": "initup plugin: React Native (Expo) base scaffold.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

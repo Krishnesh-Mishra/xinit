@@ -1,7 +1,7 @@
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 
-import { pack } from "@xinit/core";
+import { pack } from "@initup/core";
 
 import { IO } from "../lib/io.js";
 
@@ -21,7 +21,7 @@ export interface PackResult {
   out: string;
 }
 
-/** `xinit pack <dir>` — author folder → single distributable JSON. */
+/** `initup pack <dir>` — author folder → single distributable JSON. */
 export async function runPack(
   dir: string,
   flags: PackFlags,

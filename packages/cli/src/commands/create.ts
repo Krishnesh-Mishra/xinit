@@ -2,7 +2,7 @@ import * as fs from "node:fs";
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 
-import type { ApplyResult, Installer, Runner } from "@xinit/core";
+import type { ApplyResult, Installer, Runner } from "@initup/core";
 
 import { IO } from "../lib/io.js";
 import { resolvePluginArg, resolvePluginsDir } from "../lib/plugins.js";
@@ -32,7 +32,7 @@ export interface CreateDeps {
 }
 
 /**
- * `xinit create [template]` — v1 minimal scaffold: run the base plugin (react)
+ * `initup create [template]` — v1 minimal scaffold: run the base plugin (react)
  * in a target dir. Pre-seeds a minimal package.json so script/dep patches apply.
  */
 export async function runCreate(

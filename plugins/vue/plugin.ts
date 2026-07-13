@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * Vue (Vite) base scaffold — a thin, non-interactive wrapper over the official

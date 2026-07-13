@@ -4,7 +4,7 @@ Scaffolds a new **React Native** app with **Expo** by delegating to Expo's
 official `create-expo-app` CLI.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/react-native-expo/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/react-native-expo/plugin.ts`.
 
 - **Applies to:** `type: new-app` (a base scaffold).
 - **Detect:** dependency `expo`.

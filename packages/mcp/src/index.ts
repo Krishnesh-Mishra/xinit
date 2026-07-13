@@ -1,7 +1,7 @@
 /**
- * XInit MCP server (M5, SPEC §8).
+ * initup MCP server (M5, SPEC §8).
  *
- * A stdio MCP server named "xinit" that exposes `@xinit/core` to AI agents
+ * A stdio MCP server named "initup" that exposes `@initup/core` to AI agents
  * (Claude Code, Codex, Cursor). Every tool is a thin wrapper that calls a
  * handler in `./tools.js` and returns structured JSON in the MCP `content`
  * result; all determinism/idempotency/consent logic stays in core.
@@ -46,7 +46,7 @@ async function run(fn: () => unknown | Promise<unknown>) {
 }
 
 /**
- * Register every XInit tool on `server`. `deps` is injectable so an embedding
+ * Register every initup tool on `server`. `deps` is injectable so an embedding
  * host (or a test) can supply a plugins dir / installer / runner.
  */
 export function registerTools(server: McpServer, deps: ToolDeps = {}): void {
@@ -55,7 +55,7 @@ export function registerTools(server: McpServer, deps: ToolDeps = {}): void {
     {
       title: "Detect project",
       description:
-        "Fingerprint a project directory and return its XInit Project model " +
+        "Fingerprint a project directory and return its initup Project model " +
         "(kind, manager, apps, packages, detected plugins). Defaults to the " +
         "current working directory.",
       inputSchema: { root: z.string().optional() },
@@ -136,17 +136,17 @@ export function registerTools(server: McpServer, deps: ToolDeps = {}): void {
 
 /** Boot the stdio server. Kept side-effect-free on import for testability. */
 export async function main(): Promise<void> {
-  const server = new McpServer({ name: "xinit", version: "1.0.0" });
+  const server = new McpServer({ name: "initup", version: "1.0.0" });
   registerTools(server);
   const transport = new StdioServerTransport();
   await server.connect(transport);
   // Never write to stdout here — it carries the JSON-RPC stream.
-  process.stderr.write("xinit MCP server running on stdio\n");
+  process.stderr.write("initup MCP server running on stdio\n");
 }
 
 main().catch((err) => {
   process.stderr.write(
-    `xinit-mcp fatal: ${err instanceof Error ? err.stack ?? err.message : String(err)}\n`,
+    `initup-mcp fatal: ${err instanceof Error ? err.stack ?? err.message : String(err)}\n`,
   );
   process.exit(1);
 });

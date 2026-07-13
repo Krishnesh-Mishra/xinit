@@ -14,7 +14,7 @@ const run = promisify(execFile);
 let dir: string;
 
 beforeEach(async () => {
-  dir = path.join(os.tmpdir(), `xinit-git-test-${randomUUID()}`);
+  dir = path.join(os.tmpdir(), `initup-git-test-${randomUUID()}`);
   await fs.mkdir(dir, { recursive: true });
 });
 

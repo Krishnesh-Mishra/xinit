@@ -1,4 +1,4 @@
-import { addPlugin } from "@xinit/core";
+import { addPlugin } from "@initup/core";
 import type {
   Answers,
   ApplyResult,
@@ -7,7 +7,7 @@ import type {
   Plan,
   Project,
   Runner,
-} from "@xinit/core";
+} from "@initup/core";
 
 import { appDir, selectApp } from "../lib/apps.js";
 import { IO } from "../lib/io.js";
@@ -180,7 +180,7 @@ export async function applyPluginToApp(ctx: ApplyContext): Promise<ApplyResult> 
 }
 
 /**
- * `xinit add <plugin>` — resolve the plugin, pick the target app, and apply.
+ * `initup add <plugin>` — resolve the plugin, pick the target app, and apply.
  * Returns the final `ApplyResult` so the caller can map status → exit code.
  */
 export async function runAdd(

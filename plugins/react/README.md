@@ -3,7 +3,7 @@
 Scaffolds a React app on Vite. Base plugin for `new-app` projects.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/react/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/react/plugin.ts`.
 
 ## Prompts
 

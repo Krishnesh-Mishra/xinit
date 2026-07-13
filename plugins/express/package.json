@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-express",
+  "name": "@initup/plugin-express",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit reference plugin: Express + tsx backend.",
+  "description": "initup reference plugin: Express + tsx backend.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

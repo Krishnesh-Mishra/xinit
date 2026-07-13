@@ -1,6 +1,6 @@
 import { cancel, confirm, isCancel, multiselect, select, text } from "@clack/prompts";
 
-import type { Answers, Prompt } from "@xinit/core";
+import type { Answers, Prompt } from "@initup/core";
 
 /** Thrown when the user aborts an interactive prompt (Ctrl-C / Esc). */
 export class CancelledError extends Error {

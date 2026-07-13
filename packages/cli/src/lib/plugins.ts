@@ -2,8 +2,8 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { isPluginDir, readManifestFacts } from "@xinit/core";
-import type { Language, PluginManifest, Trust } from "@xinit/core";
+import { isPluginDir, readManifestFacts } from "@initup/core";
+import type { Language, PluginManifest, Trust } from "@initup/core";
 
 /** A `plugins/` dir is valid if any immediate subdir is an authored plugin. */
 function hasPlugins(dir: string): boolean {
@@ -21,7 +21,7 @@ function hasPlugins(dir: string): boolean {
  * until an ancestor contains a valid `plugins/` folder. This is robust to the
  * differing depths of the built bundle (`packages/cli/dist/cli.js`) and the
  * source under test (`packages/cli/src/lib/*`), which flatten differently.
- * `--plugins-dir` / `XINIT_PLUGINS_DIR` override this.
+ * `--plugins-dir` / `initup_PLUGINS_DIR` override this.
  */
 export function defaultPluginsDir(): string {
   let dir = path.dirname(fileURLToPath(import.meta.url));
@@ -38,7 +38,7 @@ export function defaultPluginsDir(): string {
 
 export function resolvePluginsDir(override?: string): string {
   if (override) return path.resolve(override);
-  const env = process.env.XINIT_PLUGINS_DIR;
+  const env = process.env.initup_PLUGINS_DIR;
   if (env) return path.resolve(env);
   return defaultPluginsDir();
 }
@@ -68,7 +68,7 @@ function looksLikePluginDir(p: string): boolean {
 }
 
 /**
- * Resolve the `<plugin>` argument of `xinit add`:
+ * Resolve the `<plugin>` argument of `initup add`:
  * - an existing path to a plugin folder → third-party (unless it lives under the
  *   bundled plugins dir), or
  * - a bare name resolved against the bundled plugins dir → first-party.

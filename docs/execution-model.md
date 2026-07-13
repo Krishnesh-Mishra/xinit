@@ -1,6 +1,6 @@
 # Execution model & safety
 
-Why XInit can run scripted, imperative plugin code and still give you a dry-run
+Why initup can run scripted, imperative plugin code and still give you a dry-run
 plan, consent, idempotency, and rollback. This is the heart of the design
 (SPEC §5–§8); the source of truth for the shapes named here is
 `packages/core/src/types.ts`.
@@ -82,7 +82,7 @@ interface ApplyResult {
 
 Nothing is written until the Plan is approved.
 
-- **Interactive CLI** (`xinit`, `xinit manage`, or `xinit add` without flags): the
+- **Interactive CLI** (`initup`, `initup manage`, or `initup add` without flags): the
   Plan is shown and you confirm before it applies.
 - **Effect-free trusted plugins** (first-party, or third-party install-only — no
   `exec`/`network`) apply without an extra gate.
@@ -131,7 +131,7 @@ Applying a Plan is transactional (SPEC §6.6):
    every tracked file is restored to its snapshot, and the `ApplyResult.status`
    comes back `rolled_back` (the CLI exits `1`).
 
-XInit refuses to run on a dirty git tree without `--force`, so a rollback returns
+initup refuses to run on a dirty git tree without `--force`, so a rollback returns
 you to a clean, known state.
 
 ## Idempotency rules
@@ -187,7 +187,7 @@ is required before open third-party plugins run unattended (tracked in
 
 ## Why plugins are safe
 
-Putting it together, an XInit plugin is safe in a way a docs-augmented AI acting
+Putting it together, an initup plugin is safe in a way a docs-augmented AI acting
 directly cannot match:
 
 - **You see the Plan before anything happens** — a real dry run with diffs.
@@ -197,7 +197,7 @@ directly cannot match:
 - **Re-running is a no-op** — per-op idempotency, CRLF-safe, position-aware.
 - **Computation is sandboxed** — `ctx` is the only door to the machine.
 
-That is XInit's moat: determinism, idempotency, transactional rollback, and
+That is initup's moat: determinism, idempotency, transactional rollback, and
 machine-readable state — the guarantees the tool provides so the human or agent
 driving it doesn't have to.
 

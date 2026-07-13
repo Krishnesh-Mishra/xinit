@@ -3,7 +3,7 @@
 Adds **HeroUI v3** to a React + Tailwind v4 app.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/heroui/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/heroui/plugin.ts`.
 
 - **Applies to:** `framework: react`.
 - **Depends on:** `tailwind-v4`.
@@ -18,7 +18,7 @@ Adds **HeroUI v3** to a React + Tailwind v4 app.
 - **`src/index.css`:** prepends `@import "tailwindcss";`, then inserts
   `@import "@heroui/styles";` immediately after it.
 
-## Why this is XInit's headline "staleness trap"
+## Why this is initup's headline "staleness trap"
 
 Every LLM trained on HeroUI **v2** will confidently add a `<HeroUIProvider>`
 wrapper and a `tailwind.config` `plugins: [heroui()]` entry, plus the
@@ -29,7 +29,7 @@ wrapper and a `tailwind.config` `plugins: [heroui()]` entry, plus the
   `tailwind.config` plugin.
 - Styles come from **`@heroui/styles`** imported in CSS, in a specific order.
 
-XInit encodes the *current, correct* steps once, deterministically — so you get
+initup encodes the *current, correct* steps once, deterministically — so you get
 v3 wiring instead of a plausible-looking v2 answer that fails at runtime.
 
 Capabilities: `install` only — no exec, no network.

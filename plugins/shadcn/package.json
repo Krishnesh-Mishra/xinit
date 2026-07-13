@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-shadcn",
+  "name": "@initup/plugin-shadcn",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit reference plugin: shadcn/ui via the official CLI.",
+  "description": "initup reference plugin: shadcn/ui via the official CLI.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

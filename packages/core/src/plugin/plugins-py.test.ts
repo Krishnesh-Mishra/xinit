@@ -30,7 +30,7 @@ const PLUGINS = path.join(REPO_ROOT, "plugins");
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-plugins-py-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-plugins-py-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
 
   // A uv-managed Python app: pyproject + (empty-ish) uv.lock ⇒ manager "uv".

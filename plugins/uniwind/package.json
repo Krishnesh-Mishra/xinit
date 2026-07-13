@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-uniwind",
+  "name": "@initup/plugin-uniwind",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Uniwind (Tailwind CSS for React Native).",
+  "description": "initup plugin: Uniwind (Tailwind CSS for React Native).",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

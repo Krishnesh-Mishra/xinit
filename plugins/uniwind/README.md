@@ -5,7 +5,7 @@ Adds **Uniwind** — the fastest Tailwind CSS bindings for React Native
 `heroui-native` depends on.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/uniwind/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/uniwind/plugin.ts`.
 
 - **Applies to:** `framework: expo` (also React Native).
 - **Detect:** dependency `uniwind`.
@@ -26,7 +26,7 @@ Adds **Uniwind** — the fastest Tailwind CSS bindings for React Native
 
 Some steps compose with existing config and cannot be safely auto-written:
 
-- **If a `metro.config.js` already exists**, XInit warns you to wrap it with
+- **If a `metro.config.js` already exists**, initup warns you to wrap it with
   `withUniwindConfig` from `uniwind/metro` as the **outermost** wrapper, rather
   than risk clobbering your config.
 - **Babel:** add `'react-native-worklets/plugin'` to your `babel.config.js`

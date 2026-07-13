@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-django",
+  "name": "@initup/plugin-django",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Django project scaffold.",
+  "description": "initup plugin: Django project scaffold.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

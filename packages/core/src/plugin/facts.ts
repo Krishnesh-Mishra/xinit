@@ -18,7 +18,7 @@ import * as esbuild from "esbuild";
 
 import type { PluginManifest } from "../types.js";
 import {
-  XINIT_EXTERNALS,
+  initup_EXTERNALS,
   definitionObject,
   evalModule,
   factsFromDefinition,
@@ -42,7 +42,7 @@ function bundleTypedSync(entryFile: string): string {
     format: "cjs",
     platform: "node",
     write: false,
-    external: XINIT_EXTERNALS,
+    external: initup_EXTERNALS,
     logLevel: "silent",
   });
   return result.outputFiles[0]!.text;

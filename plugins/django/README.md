@@ -4,7 +4,7 @@ Scaffolds a standard **Django** project into a Python app — deterministically 
 offline (no `django-admin startproject` exec).
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/django/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/django/plugin.ts`.
 
 - **Applies to:** `framework: django` (also usable when scaffolding a new app).
 - **Languages:** `python`.

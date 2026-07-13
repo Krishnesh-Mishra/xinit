@@ -23,6 +23,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 
-# xinit runtime
-.xinit/snapshots/
+# initup runtime
+.initup/snapshots/
 *.log

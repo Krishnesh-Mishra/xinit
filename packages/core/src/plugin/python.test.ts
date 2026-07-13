@@ -1,5 +1,5 @@
 /**
- * End-to-end coverage for XInit operating on a Python project (SPEC §10).
+ * End-to-end coverage for initup operating on a Python project (SPEC §10).
  *
  * A tiny inline plugin (authored via `definePlugin`, packed with `pack`) exercises
  * the Python-facing surface against a `pyproject.toml` + `main.py` fixture:
@@ -24,7 +24,7 @@ let work: string;
 let pluginDir: string;
 
 const PLUGIN_SRC = `
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 export default definePlugin({
   name: "py-demo",
@@ -35,7 +35,7 @@ export default definePlugin({
   setup: (ctx) => {
     ctx.install(["httpx"]);
     ctx.patchToml("pyproject.toml", {
-      tool: { xinit: { configured: true } },
+      tool: { initup: { configured: true } },
     });
     ctx.setEnv("X", "1");
     ctx.ensureLine(ctx.entryFile(), "load_dotenv()");
@@ -44,7 +44,7 @@ export default definePlugin({
 `;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-python-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-python-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
 
   // A uv-managed Python app: pyproject + uv.lock ⇒ manager "uv".
@@ -58,7 +58,7 @@ beforeEach(async () => {
     "import os\n\nprint(os.getenv('X'))\n",
   );
 
-  pluginDir = path.join(os.tmpdir(), `xinit-pyplugin-${randomUUID()}`);
+  pluginDir = path.join(os.tmpdir(), `initup-pyplugin-${randomUUID()}`);
   await fsp.mkdir(pluginDir, { recursive: true });
   await fsp.writeFile(path.join(pluginDir, "plugin.ts"), PLUGIN_SRC);
 });
@@ -95,7 +95,7 @@ describe("addPlugin — Python project end-to-end", () => {
     // pyproject.toml was deep-merged (existing keys preserved).
     const pyproject = read("pyproject.toml");
     expect(pyproject).toContain('name = "svc"');
-    expect(pyproject).toContain("[tool.xinit]");
+    expect(pyproject).toContain("[tool.initup]");
     expect(pyproject).toContain("configured = true");
 
     // .env written by setEnv.

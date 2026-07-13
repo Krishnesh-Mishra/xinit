@@ -1,12 +1,12 @@
 {
-  "name": "@xinit/mcp",
+  "name": "@initup/mcp",
   "version": "1.0.0",
-  "description": "XInit MCP server — deterministic project operations for AI agents",
+  "description": "initup MCP server — deterministic project operations for AI agents",
   "license": "MIT",
   "author": "Krishnesh Mishra",
   "type": "module",
   "bin": {
-    "xinit-mcp": "./dist/index.js"
+    "initup-mcp": "./dist/index.js"
   },
   "files": [
     "dist"
@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "@xinit/core": "workspace:*",
+    "@initup/core": "workspace:*",
     "zod": "^4.4.3"
   },
   "devDependencies": {

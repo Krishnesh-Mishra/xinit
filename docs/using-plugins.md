@@ -1,37 +1,37 @@
-# Using XInit
+# Using initup
 
-How to drive XInit as a human at the CLI, as a script/CI job, and as an AI agent
+How to drive initup as a human at the CLI, as a script/CI job, and as an AI agent
 through the MCP server. Every command, flag, and tool name below matches the
 source (`packages/cli/src/cli.ts`, `packages/mcp/src/index.ts`).
 
 - [Install & build](#install--build)
 - [The mental model](#the-mental-model)
 - [CLI commands](#cli-commands)
-  - [`xinit` / `xinit detect`](#xinit--xinit-detect)
-  - [`xinit add`](#xinit-add)
-  - [`xinit manage`](#xinit-manage)
-  - [`xinit create`](#xinit-create)
-  - [`xinit doctor`](#xinit-doctor)
-  - [`xinit pack`](#xinit-pack)
-  - [`xinit make`](#xinit-make)
+  - [`initup` / `initup detect`](#initup--initup-detect)
+  - [`initup add`](#initup-add)
+  - [`initup manage`](#initup-manage)
+  - [`initup create`](#initup-create)
+  - [`initup doctor`](#initup-doctor)
+  - [`initup pack`](#initup-pack)
+  - [`initup make`](#initup-make)
 - [First-party vs third-party plugins (trust tiers)](#first-party-vs-third-party-plugins-trust-tiers)
 - [The dry-run plan + consent gate](#the-dry-run-plan--consent-gate)
 - [Scripts & AI: `--json` and `--silent`](#scripts--ai---json-and---silent)
 - [Monorepos: `--app`](#monorepos---app)
-- [Using XInit via MCP](#using-xinit-via-mcp)
+- [Using initup via MCP](#using-initup-via-mcp)
 
 ---
 
 ## Install & build
 
-XInit is a pnpm monorepo. Build once, then run the `xinit` CLI.
+initup is a pnpm monorepo. Build once, then run the `initup` CLI.
 
 ```bash
 pnpm install
-pnpm build        # builds @xinit/core, xinit (CLI), @xinit/mcp
+pnpm build        # builds @initup/core, initup (CLI), @initup/mcp
 ```
 
-The CLI binary is `xinit` (package `xinit`). The MCP server is a Node entry at
+The CLI binary is `initup` (package `initup`). The MCP server is a Node entry at
 `packages/mcp/dist/index.js`.
 
 ## The mental model
@@ -40,7 +40,7 @@ A **plugin** is one idempotent, reversible transformation that does the *whole*
 job of adding a technology: install the deps **and** patch the config **and**
 generate the starter code. Adding one is always:
 
-1. **Detect** — XInit fingerprints the project (kind, package manager, apps).
+1. **Detect** — initup fingerprints the project (kind, package manager, apps).
 2. **Resolve** — dependencies (`dependsOn`), conflicts, and version `requires`
    are checked; prompts are gathered.
 3. **Plan** — `setup()` runs against real project state and records writes into a
@@ -61,15 +61,15 @@ Global convention: `--json` makes **stdout pure JSON** (errors are emitted as
 human output goes to stderr/stdout with colour. A cancelled interactive prompt
 exits `130`; a rolled-back apply exits `1`.
 
-### `xinit` / `xinit detect`
+### `initup` / `initup detect`
 
 Fingerprint the project in the current working directory and print its `Project`
 model.
 
 ```bash
-xinit                # detect (default command)
-xinit detect         # same, explicit
-xinit detect --json  # machine-readable Project model
+initup                # detect (default command)
+initup detect         # same, explicit
+initup detect --json  # machine-readable Project model
 ```
 
 | Flag | Meaning |
@@ -82,12 +82,12 @@ The `Project` model contains `root`, `kind` (`single` | `monorepo`), `manager`
 `language` (`js` \| `ts` \| `python`), optional `framework`, and `plugins[]`
 (names detected as already installed — **UX only**, not a guarantee).
 
-### `xinit add`
+### `initup add`
 
 Add/configure a plugin in an app. This is the core verb.
 
 ```bash
-xinit add <plugin> [--app <name>] [--plugins-dir <dir>] \
+initup add <plugin> [--app <name>] [--plugins-dir <dir>] \
                    [--answers <json>] [--json] [--silent] [--yes]
 ```
 
@@ -106,33 +106,33 @@ path** to an authored plugin folder or `plugin.ts`, or a **packed JSON** file
 [trust tiers](#first-party-vs-third-party-plugins-trust-tiers).
 
 ```bash
-xinit add heroui                          # first-party by name
-xinit add mongodb --answers '{"dbName":"shop"}'
-xinit add ./plugins/heroui                # local folder
-xinit add ./downloads/cool-plugin.json    # packed single-JSON
-xinit add shadcn --yes                     # approve the exec/network consent gate
+initup add heroui                          # first-party by name
+initup add mongodb --answers '{"dbName":"shop"}'
+initup add ./plugins/heroui                # local folder
+initup add ./downloads/cool-plugin.json    # packed single-JSON
+initup add shadcn --yes                     # approve the exec/network consent gate
 ```
 
-### `xinit manage`
+### `initup manage`
 
 Launch the interactive wizard: repo → (Manage Apps | Manage Packages) → app →
 (Add plugin | Configure plugin) → prompts → Plan → confirm → apply. v1 adds and
 configures; it does **not** remove.
 
 ```bash
-xinit manage [--plugins-dir <dir>]
+initup manage [--plugins-dir <dir>]
 ```
 
 | Flag | Meaning |
 | --- | --- |
 | `--plugins-dir <dir>` | Directory of available plugins. |
 
-### `xinit create`
+### `initup create`
 
 Scaffold a new app. v1 ships the `react` template.
 
 ```bash
-xinit create [template] [--dir <path>] [--plugins-dir <dir>] \
+initup create [template] [--dir <path>] [--plugins-dir <dir>] \
                         [--json] [--silent] [--yes]
 ```
 
@@ -145,22 +145,22 @@ xinit create [template] [--dir <path>] [--plugins-dir <dir>] \
 | `--yes` | Auto-approve the consent handshake. |
 
 ```bash
-xinit create react --dir ./my-app
+initup create react --dir ./my-app
 ```
 
-### `xinit doctor`
+### `initup doctor`
 
 Report project health. **v1 reports only — it does not fix.**
 
 ```bash
-xinit doctor [--json]
+initup doctor [--json]
 ```
 
 | Flag | Meaning |
 | --- | --- |
 | `--json` | Output the health report as JSON. |
 
-### `xinit pack`
+### `initup pack`
 
 Pack an authored plugin **folder** (`plugin.json` + optional `setup.ts` + `files/`)
 into a single distributable JSON. `setup.ts` is bundled with esbuild (local
@@ -168,7 +168,7 @@ imports inlined) into a `setup` string, and `files/` are base64-encoded into a
 `files` map.
 
 ```bash
-xinit pack <dir> [--out <file>] [--json]
+initup pack <dir> [--out <file>] [--json]
 ```
 
 | Flag | Meaning |
@@ -177,16 +177,16 @@ xinit pack <dir> [--out <file>] [--json]
 | `--json` | Machine-readable output (stdout is JSON only). |
 
 ```bash
-xinit pack ./plugins/mongodb --out mongodb.json
+initup pack ./plugins/mongodb --out mongodb.json
 ```
 
-### `xinit make`
+### `initup make`
 
 Compile a **typed** `plugin.ts` (the recommended single-file form) — or a folder —
 into the same single distributable JSON. This is the everyday authoring command.
 
 ```bash
-xinit make <entry> [--out <file>] [--json]
+initup make <entry> [--out <file>] [--json]
 ```
 
 | Flag | Meaning |
@@ -195,7 +195,7 @@ xinit make <entry> [--out <file>] [--json]
 | `--json` | Machine-readable output (stdout is JSON only). |
 
 ```bash
-xinit make plugins/tailwind-v4/plugin.ts   # → tailwind-v4.json
+initup make plugins/tailwind-v4/plugin.ts   # → tailwind-v4.json
 ```
 
 > `pack` and `make` produce the **same** artifact — a JSON carrying the manifest
@@ -207,15 +207,15 @@ xinit make plugins/tailwind-v4/plugin.ts   # → tailwind-v4.json
 
 ## First-party vs third-party plugins (trust tiers)
 
-XInit is **open**: anyone may author a plugin and paste a link to its JSON. Trust
+initup is **open**: anyone may author a plugin and paste a link to its JSON. Trust
 is expressed by *where the plugin comes from* and *what capabilities it declares*,
 not by a gatekeeper.
 
 | Tier | How you add it | Behavior |
 | --- | --- | --- |
-| **First-party** (bundled by name) | `xinit add heroui` | Curated and shipped with XInit. Runs immediately. |
-| **Third-party, install-only** (no `exec`/`network`) | `xinit add ./plugin.json` or a local folder | Only installs deps and patches files — every write is recorded and reversible. Runs, flagged as third-party. |
-| **Third-party needing `exec` or `network`** | `xinit add ./plugin.json` | Trips the **consent gate**: you review the Plan first. Approve with `--yes` (CLI) or the confirm-token (MCP). |
+| **First-party** (bundled by name) | `initup add heroui` | Curated and shipped with initup. Runs immediately. |
+| **Third-party, install-only** (no `exec`/`network`) | `initup add ./plugin.json` or a local folder | Only installs deps and patches files — every write is recorded and reversible. Runs, flagged as third-party. |
+| **Third-party needing `exec` or `network`** | `initup add ./plugin.json` | Trips the **consent gate**: you review the Plan first. Approve with `--yes` (CLI) or the confirm-token (MCP). |
 
 Because pasted code runs in a sandbox where *computation is free but every effect
 is a declared, consented capability*, "open" does not mean "unrestricted" — see
@@ -224,7 +224,7 @@ is a declared, consented capability*, "open" does not mean "unrestricted" — se
 Adding from a **local path** (`./my-plugin/` or `./my-plugin/plugin.ts`) or a
 **packed JSON** (`./my-plugin.json`) is how you consume third-party plugins today.
 Download the JSON, read it if you like (it is plain text — manifest facts + a
-`setup` string + base64 files), then `xinit add ./my-plugin.json`.
+`setup` string + base64 files), then `initup add ./my-plugin.json`.
 
 ## The dry-run plan + consent gate
 
@@ -258,7 +258,7 @@ For non-interactive callers (CI, scripts, agents):
 
 ```bash
 # Fully non-interactive, machine-readable, auto-approved:
-xinit add mongodb --app api --answers '{"dbName":"shop"}' --json --silent --yes
+initup add mongodb --app api --answers '{"dbName":"shop"}' --json --silent --yes
 ```
 
 `ApplyResult.status` is one of `success`, `rolled_back`, or
@@ -267,27 +267,27 @@ xinit add mongodb --app api --answers '{"dbName":"shop"}' --json --silent --yes
 ## Monorepos: `--app`
 
 In a monorepo, target one app with `--app <name>` (the app `name` from
-`xinit detect`). Without it, XInit uses the single app if there is exactly one,
+`initup detect`). Without it, initup uses the single app if there is exactly one,
 otherwise it prompts (or errors under `--silent`). `ctx.appDir` inside the plugin
 points at that app; `ctx.repoRoot` is the monorepo root.
 
 ```bash
-xinit detect --json                 # find app names
-xinit add tailwind-v4 --app web
+initup detect --json                 # find app names
+initup add tailwind-v4 --app web
 ```
 
 ---
 
-## Using XInit via MCP
+## Using initup via MCP
 
-The MCP server (`@xinit/mcp`) exposes the same core to AI agents (Claude Code,
+The MCP server (`@initup/mcp`) exposes the same core to AI agents (Claude Code,
 Codex, Cursor). Register it:
 
 ```bash
-claude mcp add xinit -- node /path/to/xinit/packages/mcp/dist/index.js
+claude mcp add initup -- node /path/to/initup/packages/mcp/dist/index.js
 ```
 
-It is a stdio server named `xinit`. Every tool returns structured JSON in the MCP
+It is a stdio server named `initup`. Every tool returns structured JSON in the MCP
 `content` result; all determinism/idempotency/consent logic lives in core.
 
 ### The 6 tools
@@ -301,7 +301,7 @@ It is a stdio server named `xinit`. Every tool returns structured JSON in the MC
 | `doctor` | `{ root?: string }` | Detect the project and return a structured health report (apps, detected plugins, warnings). Modifies nothing. |
 | `get_graph` | `{ root?: string }` | Return a dependency-graph view: nodes for the repo, apps/packages, frameworks and plugins, with edges between them. |
 
-> Note: `get_graph` is an MCP tool only — there is no `xinit graph` CLI command in
+> Note: `get_graph` is an MCP tool only — there is no `initup graph` CLI command in
 > v1.
 
 ### The confirm-token handshake (from the user's / agent's side)

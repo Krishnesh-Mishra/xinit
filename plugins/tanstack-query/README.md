@@ -3,7 +3,7 @@
 Adds **TanStack Query** (React Query v5) to a React app.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/tanstack-query/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/tanstack-query/plugin.ts`.
 
 - **Applies to:** `framework: react`.
 - **No prompts.**

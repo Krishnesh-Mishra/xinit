@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-drizzle",
+  "name": "@initup/plugin-drizzle",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Drizzle ORM.",
+  "description": "initup plugin: Drizzle ORM.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

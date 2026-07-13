@@ -1,5 +1,5 @@
 /**
- * @xinit/core — public surface.
+ * @initup/core — public surface.
  *
  * The barrel re-exports the shared contracts plus each subsystem. Subsystems
  * live in their own folders (patch/ tx/ detect/ plugin/) so they can be built

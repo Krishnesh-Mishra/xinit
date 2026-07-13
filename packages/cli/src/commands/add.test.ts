@@ -5,7 +5,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import type { InstallSpec } from "@xinit/core";
+import type { InstallSpec } from "@initup/core";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import { IO } from "../lib/io.js";
@@ -22,7 +22,7 @@ const VITE_CONFIG =
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-cli-add-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-cli-add-${randomUUID()}`);
   await fsp.mkdir(path.join(work, "src"), { recursive: true });
 });
 

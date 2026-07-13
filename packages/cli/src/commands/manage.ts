@@ -1,5 +1,5 @@
 import { isCancel, select } from "@clack/prompts";
-import type { DetectedApp } from "@xinit/core";
+import type { DetectedApp } from "@initup/core";
 
 import { IO } from "../lib/io.js";
 import {
@@ -30,7 +30,7 @@ async function pick(
 }
 
 /**
- * `xinit manage` — interactive: detect → Apps|Packages → unit → add a compatible
+ * `initup manage` — interactive: detect → Apps|Packages → unit → add a compatible
  * plugin, then run the shared add flow. No remove in v1 (SPEC §8).
  */
 export async function runManage(deps: ManageDeps = {}): Promise<void> {

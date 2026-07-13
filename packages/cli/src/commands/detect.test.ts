@@ -10,7 +10,7 @@ import { runDetect } from "./detect.js";
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-cli-detect-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-cli-detect-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
 });
 

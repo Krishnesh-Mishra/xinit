@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-redis",
+  "name": "@initup/plugin-redis",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Redis client via ioredis.",
+  "description": "initup plugin: Redis client via ioredis.",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

@@ -1,10 +1,10 @@
 {
-  "name": "@xinit/plugin-tailwind-v4",
+  "name": "@initup/plugin-tailwind-v4",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "XInit plugin: Tailwind CSS v4 (Vite).",
+  "description": "initup plugin: Tailwind CSS v4 (Vite).",
   "devDependencies": {
-    "@xinit/core": "workspace:*"
+    "@initup/core": "workspace:*"
   }
 }

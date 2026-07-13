@@ -1,5 +1,5 @@
-import { detect } from "@xinit/core";
-import type { Project } from "@xinit/core";
+import { detect } from "@initup/core";
+import type { Project } from "@initup/core";
 
 import { IO } from "../lib/io.js";
 
@@ -42,7 +42,7 @@ export interface DetectFlags {
   json?: boolean;
 }
 
-/** Command handler for `xinit detect`. */
+/** Command handler for `initup detect`. */
 export async function detectCommand(cwd: string, flags: DetectFlags): Promise<void> {
   const io = new IO({ json: flags.json });
   const project = await runDetect(cwd);

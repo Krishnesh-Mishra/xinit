@@ -3,7 +3,7 @@
 Adds **Material UI** (MUI v7) to a React app.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/mui/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/mui/plugin.ts`.
 
 - **Applies to:** `framework: react`.
 

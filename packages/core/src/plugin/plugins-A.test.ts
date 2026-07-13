@@ -80,7 +80,7 @@ const FIXTURES: Fixture[] = [
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-plugins-A-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-plugins-A-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
   // A minimal package.json so the app dir looks like a project root.
   await fsp.writeFile(

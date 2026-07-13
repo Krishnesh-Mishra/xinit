@@ -1,8 +1,8 @@
 /**
  * Sandbox shim + typed-plugin helpers (SPEC §7).
  *
- * A typed `plugin.ts` does `import { definePlugin } from "xinit"` (or
- * `@xinit/core`). We never bundle those heavy packages into a plugin artifact:
+ * A typed `plugin.ts` does `import { definePlugin } from "initup"` (or
+ * `@initup/core`). We never bundle those heavy packages into a plugin artifact:
  * esbuild marks them EXTERNAL, and at eval time a shim `require` resolves exactly
  * those ids to identity factories `{ definePlugin, pluginMake }` and THROWS for
  * anything else — which doubles as the SPEC §7 "no arbitrary requires" guard.
@@ -20,16 +20,16 @@ import type { Capabilities, PluginManifest, SetupFn } from "../types.js";
  * (and its subpaths) out of the artifact so `import { definePlugin }` becomes a
  * shimmed require rather than an inlined copy of the toolchain.
  */
-export const XINIT_EXTERNALS = ["xinit", "@xinit/core", "@xinit/core/*"];
+export const initup_EXTERNALS = ["initup", "@initup/core", "@initup/core/*"];
 
 const identity = <T>(value: T): T => value;
 
-/** What the shim exposes for `xinit` / `@xinit/core`: the authoring identities. */
+/** What the shim exposes for `initup` / `@initup/core`: the authoring identities. */
 const SDK_SHIM = { definePlugin: identity, pluginMake: identity };
 
 /** True for the authoring SDK ids the shim is allowed to resolve. */
 function isSdkId(id: string): boolean {
-  return id === "xinit" || id === "@xinit/core" || id.startsWith("@xinit/core/");
+  return id === "initup" || id === "@initup/core" || id.startsWith("@initup/core/");
 }
 
 /**

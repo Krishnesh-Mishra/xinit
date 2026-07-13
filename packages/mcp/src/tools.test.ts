@@ -9,7 +9,7 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import type { InstallSpec } from "@xinit/core";
+import type { InstallSpec } from "@initup/core";
 
 import {
   addPluginTool,
@@ -30,7 +30,7 @@ const shadcnDir = path.join(pluginsDir, "shadcn");
 let tmp: string;
 
 beforeEach(() => {
-  tmp = fs.mkdtempSync(path.join(os.tmpdir(), "xinit-mcp-test-"));
+  tmp = fs.mkdtempSync(path.join(os.tmpdir(), "initup-mcp-test-"));
 });
 afterEach(() => {
   fs.rmSync(tmp, { recursive: true, force: true });

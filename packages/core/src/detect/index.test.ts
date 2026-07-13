@@ -21,7 +21,7 @@ function mk(tree: Tree): string {
 const json = (o: unknown): string => JSON.stringify(o, null, 2);
 
 beforeEach(() => {
-  root = fs.mkdtempSync(path.join(os.tmpdir(), "xinit-detect-"));
+  root = fs.mkdtempSync(path.join(os.tmpdir(), "initup-detect-"));
 });
 afterEach(() => {
   fs.rmSync(root, { recursive: true, force: true });

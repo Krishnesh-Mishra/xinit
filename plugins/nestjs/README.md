@@ -4,7 +4,7 @@ Scaffolds a full [NestJS](https://nestjs.com) backend by delegating to the
 official `@nestjs/cli`. Applies to `node-backend` projects.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit pack plugins/nestjs`.
+> Compile it to a distributable JSON with `initup pack plugins/nestjs`.
 
 ## Prompts
 

@@ -4,7 +4,7 @@ Adds **HeroUI Native** to a React Native / Expo app (built on **Uniwind** +
 **Tailwind v4**).
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/heroui-native/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/heroui-native/plugin.ts`.
 
 - **Applies to:** `framework: expo` (also React Native).
 - **Depends on:** `uniwind`.
@@ -15,7 +15,7 @@ Adds **HeroUI Native** to a React Native / Expo app (built on **Uniwind** +
 ## Why this plugin exists
 
 HeroUI Native's install is an exact, multi-step sequence that is easy to get
-wrong by hand or from a stale guide. XInit encodes the *current, correct* steps
+wrong by hand or from a stale guide. initup encodes the *current, correct* steps
 once, deterministically, so it is never done wrong:
 
 1. **Install** the component package: `heroui-native`.

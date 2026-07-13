@@ -5,7 +5,7 @@ Scaffolds a new **SvelteKit** app by wrapping the official Svelte CLI
 `create-svelte`) non-interactively.
 
 > Authored as a single typed `plugin.ts` (`export default definePlugin({ …facts, setup })`).
-> Compile it to a distributable JSON with `xinit make plugins/sveltekit/plugin.ts`.
+> Compile it to a distributable JSON with `initup make plugins/sveltekit/plugin.ts`.
 
 - **Applies to:** `type: new-app`.
 - **Languages:** `ts`, `js`.
@@ -24,7 +24,7 @@ Scaffolds a new **SvelteKit** app by wrapping the official Svelte CLI
 
 Add-on choices: `eslint`, `prettier`, `vitest`, `playwright`, `tailwindcss`.
 Always appended: `--no-install --no-dir-check` (`--no-dir-check` lets it
-scaffold into an app dir xinit already created).
+scaffold into an app dir initup already created).
 
 Example command (all defaults):
 

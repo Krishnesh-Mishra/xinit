@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * MongoDB via Mongoose. Depends on the `express` plugin (it wires the

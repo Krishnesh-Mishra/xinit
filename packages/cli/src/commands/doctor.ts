@@ -1,4 +1,4 @@
-import type { Project } from "@xinit/core";
+import type { Project } from "@initup/core";
 
 import { IO } from "../lib/io.js";
 import { runDetect } from "./detect.js";
@@ -77,7 +77,7 @@ export async function runDoctor(
   }
 
   const c = io.c;
-  io.note(`${c.bold("XInit doctor")}  ${c.dim(report.root)}`);
+  io.note(`${c.bold("initup doctor")}  ${c.dim(report.root)}`);
   io.note(`  ${report.kind}, ${report.manager}, confidence ${report.confidence.toFixed(2)}`);
   io.note("");
   for (const a of report.apps) {

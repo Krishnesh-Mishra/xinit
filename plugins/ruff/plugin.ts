@@ -1,4 +1,4 @@
-import { definePlugin } from "@xinit/core";
+import { definePlugin } from "@initup/core";
 
 /**
  * Ruff — the Python linter + formatter, configured in `pyproject.toml`.

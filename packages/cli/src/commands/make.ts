@@ -1,7 +1,7 @@
 import * as fsp from "node:fs/promises";
 import * as path from "node:path";
 
-import { pack } from "@xinit/core";
+import { pack } from "@initup/core";
 
 import { IO } from "../lib/io.js";
 
@@ -22,7 +22,7 @@ export interface MakeResult {
 }
 
 /**
- * `xinit make <entry>` — compile a typed plugin authoring file (`plugin.ts`) or
+ * `initup make <entry>` — compile a typed plugin authoring file (`plugin.ts`) or
  * a plugin folder into the packed, pasteable distributable JSON. A superset of
  * `pack`: `<entry>` may be a `.ts` file OR a directory.
  */

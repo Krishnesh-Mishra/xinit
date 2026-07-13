@@ -1,7 +1,7 @@
 import { exec } from "node:child_process";
 import { promisify } from "node:util";
 
-import { installCommands, type Installer, type Runner } from "@xinit/core";
+import { installCommands, type Installer, type Runner } from "@initup/core";
 
 const execP = promisify(exec);
 

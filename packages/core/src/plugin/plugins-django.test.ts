@@ -28,7 +28,7 @@ const DJANGO_DIR = path.join(REPO_ROOT, "plugins", "django");
 let work: string;
 
 beforeEach(async () => {
-  work = path.join(os.tmpdir(), `xinit-django-${randomUUID()}`);
+  work = path.join(os.tmpdir(), `initup-django-${randomUUID()}`);
   await fsp.mkdir(work, { recursive: true });
 
   // A uv-managed Python app: pyproject + (empty) uv.lock ⇒ manager "uv".

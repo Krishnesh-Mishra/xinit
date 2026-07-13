@@ -19,7 +19,7 @@ import type { Transaction } from "../types.js";
 export interface CreateTransactionOptions {
   /**
    * Base directory under which this transaction's private snapshot folder is
-   * created. Defaults to the OS temp dir. A unique `xinit-tx-<uuid>` subfolder
+   * created. Defaults to the OS temp dir. A unique `initup-tx-<uuid>` subfolder
    * is always created inside it, so concurrent transactions never collide and
    * cleanup never touches a caller-provided directory itself.
    */
@@ -39,7 +39,7 @@ interface TrackedEntry {
  */
 export function createTransaction(opts?: CreateTransactionOptions): Transaction {
   const base = opts?.snapshotDir ?? os.tmpdir();
-  const snapshotRoot = path.join(base, `xinit-tx-${randomUUID()}`);
+  const snapshotRoot = path.join(base, `initup-tx-${randomUUID()}`);
 
   // Insertion-ordered so rollback restores in track order.
   const tracked = new Map<string, TrackedEntry>();
