@@ -86,6 +86,36 @@ plugins/
 Each is a typed, single-file plugin — install + config-patch + codegen as one
 idempotent, reversible operation. More are easy to add (see below).
 
+## Using plugins
+
+Build the workspace once (`pnpm install && pnpm build`), then add any plugin to
+the app in the current directory:
+
+```bash
+xinit add heroui                 # a first-party plugin by name
+xinit add ./plugins/mongodb      # a local authored folder or plugin.ts
+xinit add ./heroui.json          # a packed single-JSON (e.g. pasted from a link)
+xinit add heroui --app web       # target one app in a monorepo
+```
+
+**Trust tiers.** First-party plugins (bundled by name) run immediately. A
+third-party plugin (local path or pasted link) that only installs/patches files
+also runs, but any plugin that needs `exec` or `network` hits a **consent gate**:
+XInit computes the dry-run **Plan** and asks you to approve it before anything
+touches disk. Approve non-interactively with `--yes`.
+
+```bash
+xinit add shadcn --yes           # auto-approve the consent gate
+xinit add heroui --json          # stdout is pure JSON (for scripts/agents)
+xinit add heroui --silent        # no prompts; use prompt defaults
+```
+
+**Via MCP** — point Claude Code / Codex / Cursor at the server and the agent
+gets the same engine (`detect_project`, `add_plugin`, …); a plugin needing
+exec/network returns a `confirmToken` the agent echoes back to proceed.
+
+→ Full guide: [`docs/using-plugins.md`](./docs/using-plugins.md).
+
 ## Plugins in one minute
 
 A plugin is a **folder** you author, packed into a **single JSON** you can host
@@ -108,6 +138,44 @@ Inside `setup.ts` you get a small, safe `ctx` toolbox (`copy`, `install`,
 dry-run plan and roll back. Pure computation is free; every real-world effect
 (files, installs, exec, network) is a **declared capability**, shown in the plan,
 and gated by consent.
+
+## Writing a plugin (basics)
+
+The recommended form is a single typed file, `plugins/<name>/plugin.ts`, that
+default-exports `definePlugin({ ...facts, setup })`:
+
+```ts
+import { definePlugin } from "@xinit/core"; // "xinit" also works
+
+export default definePlugin({
+  name: "tailwind-v4",
+  displayName: "Tailwind CSS v4",
+  version: "1.0.0",
+  appliesTo: { framework: "react" },
+  languages: ["ts", "js"],
+  capabilities: { install: true, exec: false, network: false },
+  detect: { dependency: "tailwindcss" },
+  prompts: [],
+  setup: async (ctx) => {
+    ctx.installDev(["tailwindcss", "@tailwindcss/vite"]);
+    ctx.patchConfig(ctx.configFile("vite") ?? "vite.config.ts", {
+      ensureImport: { tailwindcss: "@tailwindcss/vite" },
+      addToArray: { path: "plugins", value: "tailwindcss()" },
+    });
+    const css = ctx.stylesheet({ createIfMissing: true });
+    ctx.ensureLine(css, '@import "tailwindcss";', { position: "top" });
+  },
+});
+```
+
+Compile it into a distributable single JSON:
+
+```bash
+xinit make plugins/tailwind-v4/plugin.ts   # → tailwind-v4.json
+```
+
+→ Full guide: [`docs/authoring-plugins.md`](./docs/authoring-plugins.md), with the
+complete [`ctx` reference](./docs/ctx-reference.md).
 
 ## Usage
 

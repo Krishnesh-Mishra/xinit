@@ -314,9 +314,10 @@ xinit detect  [--json]     # print Project model
 xinit add <plugin> [--json] [--silent] [--yes]
 xinit manage               # manage apps → app → plugins  (add/configure; no remove in v1)
 xinit doctor  [--json]     # report drift vs manifest (does NOT fix in v1)
-xinit graph                # dependency graph
 xinit pack <dir>           # author folder → single distributable JSON
+xinit make <entry>         # compile a typed plugin.ts → single distributable JSON
 ```
+(A dependency-graph view is exposed via the MCP `get_graph` tool, not a CLI command.)
 Navigation (wizard): repo → (Manage Apps | Manage Packages) → app →
 (Add plugin | Configure plugin) → plugin asks its prompts → Plan → confirm → apply.
 `--silent` requires all prompt answers via flags/JSON or defaults; errors if a
@@ -324,8 +325,7 @@ required prompt has no default.
 
 ### MCP tools
 `detect_project` · `list_plugins` · `search_plugins` · `add_plugin` ·
-`configure_plugin` · `doctor` · `get_graph`. Each is a thin call into the same
-core.
+`doctor` · `get_graph` (6 tools). Each is a thin call into the same core.
 
 ### Consent handshake (AI mode)
 No interactive prompt exists for an agent, so "are you sure?" becomes a required
