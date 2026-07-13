@@ -39,7 +39,7 @@ So XInit is designed to be **the tool the agent calls**, not a competitor to it.
 
 ## Status
 
-**v1 (M0–M6) implemented** — engine + CLI + MCP server + 5 reference plugins, 78 tests green. Scope is intentionally small and honest:
+**v1 implemented** — engine + CLI + MCP server + typed authoring SDK + **26 first-party plugins**, 116+ tests green. Scope is intentionally small and honest:
 
 | Area | v1 | Later |
 | --- | --- | --- |
@@ -68,8 +68,22 @@ packages/
   mcp/         MCP tools + consent handshake                  (a thin skin)
   plugin-sdk/  types + helpers for plugin authors
 plugins/
-  react · express · mongodb · heroui · shadcn                 (reference plugins)
+  26 first-party plugins (frameworks, backends, UI, data, mobile, infra)
 ```
+
+## First-party plugins (v1)
+
+| Group | Plugins |
+| --- | --- |
+| Frameworks | `react` · `nextjs` · `vue` · `sveltekit` · `react-native-expo` |
+| Backend | `express` · `nestjs` · `fastify` · `hono` · `bun` |
+| Realtime | `ws` · `socketio` |
+| UI / styling | `tailwind-v4` · `shadcn` · `heroui` · `heroui-native` · `uniwind` · `mui` · `chakra` |
+| State / data | `zustand` · `tanstack-query` · `mongodb` · `prisma` · `drizzle` · `redis` |
+| Infra | `docker` |
+
+Each is a typed, single-file plugin — install + config-patch + codegen as one
+idempotent, reversible operation. More are easy to add (see below).
 
 ## Plugins in one minute
 
