@@ -117,6 +117,7 @@ export {
   type InstallSpec,
   type ApplyOptions,
 } from "./apply.js";
+export { installCommands } from "./install-cmd.js";
 export { loadRegistry, type Registry, type RegistryEntry } from "./registry.js";
 export {
   resolvePlugins,

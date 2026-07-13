@@ -14,18 +14,27 @@ import * as path from "node:path";
 
 import type { ApplyResult, Op, Plan } from "../types.js";
 import { createTransaction } from "../tx/index.js";
+import { detectManager } from "../detect/manager.js";
 import {
   ensureImport,
   ensureLine,
   patchConfig,
   patchJson,
+  patchToml,
   upsertEnv,
   wrapJsx,
 } from "../patch/index.js";
+import { installCommands } from "./install-cmd.js";
 
 export interface InstallSpec {
   deps: string[];
   devDeps: string[];
+  /**
+   * The app's detected package manager (pnpm | npm | yarn | bun | uv | poetry |
+   * pip | …). The installer builds its command via `installCommands`, so a
+   * Python+uv app runs `uv add …` instead of `pnpm add …`. Defaults to pnpm.
+   */
+  manager?: string;
 }
 export type Installer = (appDir: string, spec: InstallSpec) => Promise<void>;
 export type Runner = (appDir: string, cmd: string) => Promise<void>;
@@ -47,10 +56,15 @@ function shell(cmd: string, args: string[], cwd: string): Promise<void> {
   });
 }
 
-/** Default installer: workspace-friendly pnpm add (dev + prod separately). */
-const defaultInstaller: Installer = async (appDir, { deps, devDeps }) => {
-  if (deps.length > 0) await shell("pnpm", ["add", ...deps], appDir);
-  if (devDeps.length > 0) await shell("pnpm", ["add", "-D", ...devDeps], appDir);
+/**
+ * Default installer: builds the manager-appropriate command(s) via
+ * `installCommands` (pnpm add / uv add / poetry add / …) and runs each in
+ * `appDir`. Falls back to pnpm when no manager hint is present.
+ */
+const defaultInstaller: Installer = async (appDir, { deps, devDeps, manager }) => {
+  for (const cmd of installCommands(manager ?? "pnpm", deps, devDeps)) {
+    await shell(cmd, [], appDir);
+  }
 };
 
 const defaultRunner: Runner = (appDir, cmd) => shell(cmd, [], appDir);
@@ -65,6 +79,8 @@ function realizeFileOp(
       return { file: op.to, content: op.content };
     case "patchJson":
       return { file: op.file, content: patchJson(before, op.merge).content };
+    case "patchToml":
+      return { file: op.file, content: patchToml(before, op.merge).content };
     case "patchConfig":
       return { file: op.file, content: patchConfig(before, op.edit).content };
     case "ensureLine":
@@ -135,6 +151,8 @@ export async function applyPlan(
       await installer(appDir, {
         deps: plan.installs.packages,
         devDeps: plan.installs.dev,
+        // The app's manager decides the install syntax (uv/poetry/pip vs pnpm…).
+        manager: detectManager(appDir).manager,
       });
     }
 
@@ -181,6 +199,7 @@ function fileTarget(op: Op): string | null {
     case "addFile":
       return op.to;
     case "patchJson":
+    case "patchToml":
     case "patchConfig":
     case "ensureLine":
     case "setEnv":

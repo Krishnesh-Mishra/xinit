@@ -23,6 +23,7 @@ import {
   ensureLine,
   patchConfig,
   patchJson,
+  patchToml,
   upsertEnv,
   wrapJsx,
 } from "../patch/index.js";
@@ -129,6 +130,15 @@ function projectFileOp(
         file: op.file,
         before,
         result: patchJson(before, op.merge),
+        summary: `merge into ${op.file}`,
+      };
+    }
+    case "patchToml": {
+      const before = overlay.get(op.file);
+      return {
+        file: op.file,
+        before,
+        result: patchToml(before, op.merge),
         summary: `merge into ${op.file}`,
       };
     }

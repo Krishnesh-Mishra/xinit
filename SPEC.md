@@ -148,7 +148,7 @@ interface Ctx {
   // SEMANTIC RESOLVERS (reads; deterministic priority order) — solve "location varies"
   entryFile(): string;                         // best existing bootstrap, else conventional default
   stylesheet(opts?: { createIfMissing?: boolean }): string;  // global CSS; can create+wire
-  configFile(kind: "vite"|"tailwind"|"tsconfig"|"next"|"metro"): string | null;
+  configFile(kind: "vite"|"tailwind"|"tsconfig"|"next"|"metro"|"pyproject"): string | null;
   find(candidates: string[]): string | null;  // first existing
   findOrCreate(candidates: string[], defaultPath: string, initialContent?: string): string;
   envFile(): string;                           // existing `.env`, else conventional default `.env`
@@ -159,6 +159,7 @@ interface Ctx {
   copy(from: string, to: string): void;
   addFile(to: string, content: string): void;
   patchJson(file: string, merge: Record<string, unknown>): void;
+  patchToml(file: string, merge: Record<string, unknown>): void;  // Python's patchJson (pyproject.toml)
   patchConfig(file: string, edit: ConfigEdit): void;
   ensureLine(file: string, line: string, opts?: { position?: "top" | "bottom"; after?: string }): void;
   setEnv(key: string, value: string, opts?: { file?: string; example?: boolean }): void;  // env-aware upsert
@@ -174,7 +175,11 @@ interface Ctx {
 **Semantic resolvers** inspect disk immediately (relative to `appDir`) and return
 a *relative path*, resolving deterministically by priority so plugins never
 hardcode `"src/index.css"` or `"vite.config.ts"`:
-- `entryFile()` — package.json `main`/`module` if it exists, then a priority list
+- `entryFile()` — **Python-aware**: when the app is Python (a `pyproject.toml` /
+  `requirements.txt` / `setup.py` exists, or a `.py` entry is present) it resolves
+  a Python bootstrap by priority (`main.py`, `app.py`, `src/main.py`,
+  `__main__.py`, `manage.py`), defaulting to `main.py`. Otherwise: package.json
+  `main`/`module` if it exists, then a JS priority list
   (`src/main.{tsx,jsx,ts,js}`, `src/index.{tsx,ts,jsx,js}`, `index.{tsx,ts,js}`,
   `App.{tsx,jsx,js}`, RN `index.js`). Returns the best EXISTING match; if none
   exist, the conventional default for the language/framework (so a create-flow can
@@ -221,6 +226,21 @@ skipped) and **never corrupts the file**: if neither a render site nor a
 default-component return can be found, the file is left untouched and a manual-step
 warning (`"Could not auto-wrap <file>; wrap manually with <components>"`) is pushed
 into `ApplyResult.warnings` — exactly like `ctx.warn`.
+
+**`ctx.patchToml(file, merge)`** — Python's `patchJson`: a format-preserving,
+idempotent deep-merge into a TOML file (`pyproject.toml`). A fully-present merge
+returns the original bytes untouched (comments/formatting preserved); an actual
+change is re-serialized with the file's own EOL. Recorded, planned (diff) and
+applied like every other write op.
+
+**Manager-aware install.** `ctx.install`/`ctx.installDev` are recorded
+manager-agnostically; at apply time the app's package manager is detected from
+`appDir` and threaded to the installer (`InstallSpec.manager`), which builds the
+command via the shared `installCommands(manager, deps, devDeps)` helper. So a
+Python app on `uv` runs `uv add <deps>` / `uv add --dev <dev>`, `poetry` runs
+`poetry add` / `poetry add --group dev`, `pip` runs `pip install` (no dev split),
+and JS apps run `pnpm add` / `npm install -D` / `yarn add` / `bun add -d` as
+appropriate. Unknown managers default to pnpm.
 
 ### Plan
 ```jsonc
@@ -333,8 +353,13 @@ prompts are collected before a single consolidated Plan + one consent.
 
 - **JS/TS (deep):** full patch surgery — `package.json`, `tsconfig.json`,
   `vite/next/tailwind` configs (magicast), CSS.
-- **Python (medium):** manage `pyproject.toml` (format-preserving TOML), detect
-  `uv`/`poetry`/`pip`, copy files, run commands. **No `.py` source AST surgery**
+- **Python (medium):** a working install/pyproject/entry story. Detect
+  `uv`/`poetry`/`pip` and dispatch installs with the right syntax
+  (`uv add` / `poetry add` / `pip install`) via manager-aware install (§5);
+  deep-merge `pyproject.toml` (format-preserving TOML) with `ctx.patchToml`;
+  resolve the app entry (`main.py`, `app.py`, `src/main.py`, `__main__.py`,
+  `manage.py`) with a Python-aware `ctx.entryFile()`; `ctx.configFile("pyproject")`;
+  plus `setEnv`, `ensureLine`, `copy`, and `run`. **No `.py` source AST surgery**
   in v1 (no good Node-side Python AST); documented limitation. Note: XInit is a
   Node CLI — standalone binaries for non-Node audiences are a `FUTURE.md` item.
 

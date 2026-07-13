@@ -109,7 +109,13 @@ export interface WrapSpec {
 }
 
 /** The config files `ctx.configFile` can resolve. */
-export type ConfigFileKind = "vite" | "tailwind" | "tsconfig" | "next" | "metro";
+export type ConfigFileKind =
+  | "vite"
+  | "tailwind"
+  | "tsconfig"
+  | "next"
+  | "metro"
+  | "pyproject";
 
 /** The default export shape of an authored setup.ts. */
 export type SetupFn = (ctx: Ctx, answers: Answers) => void | Promise<void>;
@@ -242,6 +248,14 @@ export interface Ctx {
   copy(from: string, to: string): void;
   addFile(to: string, content: string): void;
   patchJson(file: string, merge: Record<string, unknown>): void;
+  /**
+   * Deep-merge `merge` into a TOML file relative to `appDir` — Python's
+   * `patchJson`. Format-preserving where feasible (a fully-present merge is a
+   * byte-identical no-op) and idempotent. The file is created if missing.
+   * @example ctx.patchToml("pyproject.toml", { project: { dependencies: ["httpx"] } });
+   * @example ctx.patchToml("pyproject.toml", { tool: { ruff: { "line-length": 100 } } });
+   */
+  patchToml(file: string, merge: Record<string, unknown>): void;
   patchConfig(file: string, edit: ConfigEdit): void;
   ensureLine(file: string, line: string, opts?: EnsureLineOpts): void;
   /**
@@ -291,6 +305,7 @@ export type Op =
   | { op: "installDeps"; packages: string[]; dev: boolean }
   | { op: "addFile"; to: string; content: string }
   | { op: "patchJson"; file: string; merge: Record<string, unknown> }
+  | { op: "patchToml"; file: string; merge: Record<string, unknown> }
   | { op: "patchConfig"; file: string; edit: ConfigEdit }
   | { op: "ensureLine"; file: string; line: string; opts?: EnsureLineOpts }
   | { op: "setEnv"; file: string; key: string; value: string }

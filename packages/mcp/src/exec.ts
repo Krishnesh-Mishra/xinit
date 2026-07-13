@@ -8,7 +8,7 @@
  */
 import { spawn } from "node:child_process";
 
-import type { Installer, Runner } from "@xinit/core";
+import { installCommands, type Installer, type Runner } from "@xinit/core";
 
 /** Spawn a command through the platform shell, rejecting on a non-zero exit. */
 function shell(cmd: string, cwd: string): Promise<void> {
@@ -23,18 +23,17 @@ function shell(cmd: string, cwd: string): Promise<void> {
   });
 }
 
-/** Escape a package spec for safe interpolation into a shell command line. */
-function quote(pkg: string): string {
-  return `"${pkg.replace(/(["\\$`])/g, "\\$1")}"`;
-}
-
-/** Workspace-friendly installer: `pnpm add` for prod deps, `pnpm add -D` for dev. */
-export const shellInstaller: Installer = async (appDir, { deps, devDeps }) => {
-  if (deps.length > 0) {
-    await shell(`pnpm add ${deps.map(quote).join(" ")}`, appDir);
-  }
-  if (devDeps.length > 0) {
-    await shell(`pnpm add -D ${devDeps.map(quote).join(" ")}`, appDir);
+/**
+ * Manager-aware installer: builds the install command(s) via `installCommands`
+ * (pnpm add / uv add / poetry add / …) from the app's detected manager and
+ * shells each in the app directory.
+ */
+export const shellInstaller: Installer = async (
+  appDir,
+  { deps, devDeps, manager },
+) => {
+  for (const cmd of installCommands(manager ?? "pnpm", deps, devDeps)) {
+    await shell(cmd, appDir);
   }
 };
 

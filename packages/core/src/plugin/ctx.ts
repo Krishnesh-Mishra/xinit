@@ -118,7 +118,40 @@ export class RecordingCtx implements Ctx {
     );
   }
 
+  /** Priority-ordered Python entry candidates; first existing wins. */
+  private pythonEntry(): string | null {
+    const priority = [
+      "main.py",
+      "app.py",
+      "src/main.py",
+      "__main__.py",
+      "manage.py",
+    ];
+    return priority.find((p) => this.exists(p)) ?? null;
+  }
+
+  /**
+   * True when the app looks like a Python project: a packaging/dep marker on
+   * disk, or a conventional `.py` entry present. No `.py` AST is involved.
+   */
+  private isPython(): boolean {
+    if (
+      this.exists("pyproject.toml") ||
+      this.exists("requirements.txt") ||
+      this.exists("setup.py")
+    ) {
+      return true;
+    }
+    return this.pythonEntry() !== null;
+  }
+
   entryFile(): string {
+    // 0. Python apps resolve a Python bootstrap (no package.json "main" games).
+    if (this.isPython()) {
+      // Best existing among the priority list, else the conventional default.
+      return this.pythonEntry() ?? "main.py";
+    }
+
     const ts = this.isTs();
 
     // 1. Explicit entry from package.json "main"/"module", if it exists.
@@ -227,6 +260,7 @@ export class RecordingCtx implements Ctx {
         "next.config.cjs",
       ],
       metro: ["metro.config.js", "metro.config.ts", "metro.config.cjs"],
+      pyproject: ["pyproject.toml"],
     };
     return this.find(candidates[kind]);
   }
@@ -273,6 +307,10 @@ export class RecordingCtx implements Ctx {
 
   patchJson(file: string, merge: Record<string, unknown>): void {
     this.recorded.push({ op: "patchJson", file, merge });
+  }
+
+  patchToml(file: string, merge: Record<string, unknown>): void {
+    this.recorded.push({ op: "patchToml", file, merge });
   }
 
   patchConfig(file: string, edit: ConfigEdit): void {

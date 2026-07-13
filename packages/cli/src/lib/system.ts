@@ -1,25 +1,23 @@
-import { exec, execFile } from "node:child_process";
+import { exec } from "node:child_process";
 import { promisify } from "node:util";
 
-import type { Installer, Runner } from "@xinit/core";
+import { installCommands, type Installer, type Runner } from "@xinit/core";
 
-const execFileP = promisify(execFile);
 const execP = promisify(exec);
 
-/** pnpm is a `.cmd` shim on Windows; execFile needs the exact binary name. */
-const PNPM = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
-
 /**
- * Real installer: shells `pnpm add` / `pnpm add -D` in the app directory.
- * Batched by the core (one prod + one dev call), workspace-aware because it runs
- * with `cwd` set to the target app so pnpm picks the right workspace package.
+ * Real installer: builds the manager-appropriate install command(s) via
+ * `installCommands` (pnpm add / uv add / poetry add / …) and shells each in the
+ * app directory. Batched by the core (one prod + one dev command), and
+ * workspace-aware because it runs with `cwd` set to the target app. Runs through
+ * a shell so the manager's `.cmd`/`.exe` shim resolves on Windows.
  */
-export const pnpmInstaller: Installer = async (appDir, { deps, devDeps }) => {
-  if (deps.length > 0) {
-    await execFileP(PNPM, ["add", ...deps], { cwd: appDir });
-  }
-  if (devDeps.length > 0) {
-    await execFileP(PNPM, ["add", "-D", ...devDeps], { cwd: appDir });
+export const pnpmInstaller: Installer = async (
+  appDir,
+  { deps, devDeps, manager },
+) => {
+  for (const cmd of installCommands(manager ?? "pnpm", deps, devDeps)) {
+    await execP(cmd, { cwd: appDir });
   }
 };
 
