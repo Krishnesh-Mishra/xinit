@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-vitest",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: Vitest test runner.",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}

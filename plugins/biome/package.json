@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-biome",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: Biome lint + format toolchain.",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}
