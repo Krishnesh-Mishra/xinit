@@ -6,6 +6,7 @@ import { runCreate } from "./commands/create.js";
 import { detectCommand } from "./commands/detect.js";
 import { runDoctor } from "./commands/doctor.js";
 import { runManage } from "./commands/manage.js";
+import { runRootMenu } from "./commands/menu.js";
 import { runMake } from "./commands/make.js";
 import { runPack } from "./commands/pack.js";
 import { CancelledError } from "./lib/prompts.js";
@@ -39,13 +40,18 @@ async function guard(jsonMode: boolean, fn: () => Promise<void>): Promise<void> 
 
 const cli = cac("initup");
 
-// initup / initup detect — fingerprint the project.
+// initup — a top-level menu in an interactive TTY; otherwise detect (so agents,
+// pipes and `--json` always get the Project model unchanged).
 cli
-  .command("[dir]", "Detect the project (default)")
+  .command("[dir]", "Detect the project, or open the menu when run bare in a TTY")
   .option("--json", "Output the Project model as JSON")
-  .action((dir: string | undefined, options: { json?: boolean }) =>
-    guard(!!options.json, () => detectCommand(process.cwd(), { json: options.json })),
-  );
+  .action((dir: string | undefined, options: { json?: boolean }) => {
+    const menu = !dir && !options.json && !!process.stdout.isTTY;
+    if (menu) return guard(false, () => runRootMenu());
+    return guard(!!options.json, () =>
+      detectCommand(process.cwd(), { json: options.json }),
+    );
+  });
 
 cli
   .command("detect", "Detect the project and print its model")
@@ -96,19 +102,21 @@ cli
     guard(false, () => runManage({ pluginsDir: options.pluginsDir })),
   );
 
-// initup create [template]
+// initup create [base] — the guided new-project wizard.
 cli
-  .command("create [template]", "Scaffold a new app (v1: react)")
+  .command("create [base]", "Create a new project (interactive wizard)")
   .option("--dir <path>", "Target directory (default: cwd)")
+  .option("--addons <list>", "Comma-separated add-on plugins (non-interactive)")
   .option("--plugins-dir <dir>", "Directory of available plugins")
   .option("--json", "Machine-readable output (stdout is JSON only)")
-  .option("--silent", "No prompts; use defaults")
+  .option("--silent", "No prompts; requires a base template")
   .option("--yes", "Auto-approve the consent handshake")
   .action(
     (
-      template: string | undefined,
+      base: string | undefined,
       options: {
         dir?: string;
+        addons?: string;
         pluginsDir?: string;
         json?: boolean;
         silent?: boolean;
@@ -116,8 +124,9 @@ cli
       },
     ) =>
       guard(!!options.json, async () => {
-        const result = await runCreate(template, {
+        const result = await runCreate(base, {
           dir: options.dir,
+          addons: options.addons,
           pluginsDir: options.pluginsDir,
           json: options.json,
           silent: options.silent,
