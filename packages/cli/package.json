@@ -1,0 +1,31 @@
+{
+  "name": "xinit",
+  "version": "1.0.0",
+  "description": "XInit CLI — deterministic, AI-native project operations",
+  "license": "MIT",
+  "author": "Krishnesh Mishra",
+  "type": "module",
+  "bin": {
+    "xinit": "./dist/cli.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clack/prompts": "^1.7.0",
+    "@xinit/core": "workspace:*",
+    "cac": "^7.0.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
