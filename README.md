@@ -39,7 +39,7 @@ So XInit is designed to be **the tool the agent calls**, not a competitor to it.
 
 ## Status
 
-Early development. v1 scope is intentionally small and honest:
+**v1 (M0–M6) implemented** — engine + CLI + MCP server + 5 reference plugins, 78 tests green. Scope is intentionally small and honest:
 
 | Area | v1 | Later |
 | --- | --- | --- |
@@ -93,6 +93,50 @@ Inside `setup.ts` you get a small, safe `ctx` toolbox (`copy`, `install`,
 dry-run plan and roll back. Pure computation is free; every real-world effect
 (files, installs, exec, network) is a **declared capability**, shown in the plan,
 and gated by consent.
+
+## Usage
+
+```bash
+pnpm install
+pnpm build
+```
+
+**CLI**
+
+```bash
+xinit detect [--json]          # fingerprint the project
+xinit add heroui [--app web]   # install + patch + generate, transactionally
+xinit manage                   # interactive: app → plugin
+xinit create                   # scaffold a new React app
+xinit doctor [--json]          # report project health (v1: report-only)
+xinit pack ./plugins/heroui    # author folder → single distributable JSON
+```
+
+`--json` keeps stdout pure JSON (for scripts/agents), `--silent` skips prompts
+(uses defaults), `--yes` auto-approves the consent gate.
+
+**MCP server** (for Claude Code / Codex / Cursor)
+
+```bash
+claude mcp add xinit -- node /path/to/xinit/packages/mcp/dist/index.js
+```
+
+Tools: `detect_project`, `list_plugins`, `search_plugins`, `add_plugin`,
+`doctor`, `get_graph`. A third-party plugin needing exec/network returns
+`confirmation_required` with a `confirmToken` the agent echoes back to proceed.
+
+## Develop
+
+```bash
+pnpm install
+pnpm build       # all packages
+pnpm test        # 78 tests across core / cli / mcp
+pnpm typecheck
+```
+
+Monorepo: `@xinit/core` (engine) · `xinit` (CLI) · `@xinit/mcp` (server) ·
+`plugins/*` (reference plugins). See [`SPEC.md`](./SPEC.md) for the frozen
+architecture.
 
 ## License
 
