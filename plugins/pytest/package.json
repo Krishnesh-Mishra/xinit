@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-pytest",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: pytest testing framework with pyproject config.",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}

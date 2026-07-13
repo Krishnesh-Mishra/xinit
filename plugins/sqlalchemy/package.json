@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-sqlalchemy",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: SQLAlchemy engine, session, and declarative base.",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}

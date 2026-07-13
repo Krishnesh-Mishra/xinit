@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-celery",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: Celery task queue with a Redis broker.",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}
