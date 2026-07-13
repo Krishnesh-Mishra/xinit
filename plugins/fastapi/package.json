@@ -1,0 +1,10 @@
+{
+  "name": "@xinit/plugin-fastapi",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "XInit plugin: FastAPI web API skeleton.",
+  "devDependencies": {
+    "@xinit/core": "workspace:*"
+  }
+}

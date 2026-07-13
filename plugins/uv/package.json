@@ -1,0 +1,10 @@
+{
+  "name": "@xinit/plugin-uv",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "XInit plugin: uv Python package-manager base.",
+  "devDependencies": {
+    "@xinit/core": "workspace:*"
+  }
+}

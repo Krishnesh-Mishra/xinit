@@ -153,6 +153,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
 
+  plugins/fastapi:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
   plugins/fastify:
     devDependencies:
       '@xinit/core':
@@ -207,6 +213,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
 
+  plugins/python-dotenv:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
   plugins/react:
     devDependencies:
       '@xinit/core':
@@ -220,6 +232,12 @@ importers:
         version: link:../../packages/core
 
   plugins/redis:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/ruff:
     devDependencies:
       '@xinit/core':
         specifier: workspace:*
@@ -256,6 +274,12 @@ importers:
         version: link:../../packages/core
 
   plugins/uniwind:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/uv:
     devDependencies:
       '@xinit/core':
         specifier: workspace:*
