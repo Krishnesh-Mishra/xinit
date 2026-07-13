@@ -39,7 +39,7 @@ So XInit is designed to be **the tool the agent calls**, not a competitor to it.
 
 ## Status
 
-**v1 implemented** — engine + CLI + MCP server + typed authoring SDK + **30 first-party plugins** (JS/TS **and** Python), 170+ tests green. Scope is intentionally small and honest:
+**v1 implemented** — engine + CLI + MCP server + typed authoring SDK + **31 first-party plugins** (JS/TS **and** Python), 176 tests green. Scope is intentionally small and honest:
 
 | Area | v1 | Later |
 | --- | --- | --- |
@@ -68,7 +68,7 @@ packages/
   mcp/         MCP tools + consent handshake                  (a thin skin)
   plugin-sdk/  types + helpers for plugin authors
 plugins/
-  30 first-party plugins (JS + Python: frameworks, backends, UI, data, mobile, infra)
+  31 first-party plugins (JS + Python: frameworks, backends, UI, data, mobile, infra)
 ```
 
 ## First-party plugins (v1)
@@ -81,7 +81,7 @@ plugins/
 | UI / styling | `tailwind-v4` · `shadcn` · `heroui` · `heroui-native` · `uniwind` · `mui` · `chakra` |
 | State / data | `zustand` · `tanstack-query` · `mongodb` · `prisma` · `drizzle` · `redis` |
 | Infra | `docker` |
-| Python | `uv` · `python-dotenv` · `ruff` · `fastapi` |
+| Python | `uv` · `python-dotenv` · `ruff` · `fastapi` · `django` |
 
 Each is a typed, single-file plugin — install + config-patch + codegen as one
 idempotent, reversible operation. More are easy to add (see below).
@@ -145,7 +145,7 @@ Tools: `detect_project`, `list_plugins`, `search_plugins`, `add_plugin`,
 ```bash
 pnpm install
 pnpm build       # all packages
-pnpm test        # 78 tests across core / cli / mcp
+pnpm test        # 176 tests across core / cli / mcp
 pnpm typecheck
 ```
 

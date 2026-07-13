@@ -135,6 +135,12 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
 
+  plugins/django:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
   plugins/docker:
     devDependencies:
       '@xinit/core':
