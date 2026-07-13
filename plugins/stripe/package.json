@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-stripe",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: Stripe Node server client.",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}

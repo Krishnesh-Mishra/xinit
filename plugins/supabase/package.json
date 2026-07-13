@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-supabase",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: Supabase JS client.",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}

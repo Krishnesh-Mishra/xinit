@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-better-auth",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: Better Auth (authentication for TypeScript/JavaScript).",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-trpc",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: tRPC v11 server router + client scaffold.",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}
