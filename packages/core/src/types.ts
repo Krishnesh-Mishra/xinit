@@ -209,6 +209,14 @@ export interface Ctx {
   // Deterministic priority order; the "create" variants also record deferred
   // writes. See SPEC §5.
   /**
+   * The app's language, inferred from disk: `"python"` for a Python project
+   * (pyproject/requirements/setup.py or a `.py` entry), else `"ts"` when a
+   * `tsconfig.json` is present, else `"js"`. Use it to branch a cross-language
+   * plugin (e.g. install `pg` vs `psycopg`).
+   * @example const lang = ctx.language(); ctx.install(lang === "python" ? ["psycopg[binary]"] : ["pg"]);
+   */
+  language(): "python" | "ts" | "js";
+  /**
    * Locate the app bootstrap/entry file. Returns the best EXISTING match, or —
    * if none exist — the conventional default for the app's language/framework
    * (so a create-flow can `addFile` it). The returned path may not exist yet.

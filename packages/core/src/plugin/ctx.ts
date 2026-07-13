@@ -16,6 +16,7 @@ import type {
   Ctx,
   EnsureImportSpec,
   EnsureLineOpts,
+  Language,
   Op,
   Prompt,
   SetEnvOpts,
@@ -143,6 +144,11 @@ export class RecordingCtx implements Ctx {
       return true;
     }
     return this.pythonEntry() !== null;
+  }
+
+  language(): Language {
+    if (this.isPython()) return "python";
+    return this.exists("tsconfig.json") ? "ts" : "js";
   }
 
   entryFile(): string {
