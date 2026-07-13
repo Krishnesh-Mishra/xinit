@@ -1,0 +1,10 @@
+{
+  "name": "@xinit/plugin-zustand",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "XInit plugin: Zustand state management.",
+  "devDependencies": {
+    "@xinit/core": "workspace:*"
+  }
+}

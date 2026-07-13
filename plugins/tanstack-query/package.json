@@ -1,0 +1,10 @@
+{
+  "name": "@xinit/plugin-tanstack-query",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "XInit plugin: TanStack Query (React Query).",
+  "devDependencies": {
+    "@xinit/core": "workspace:*"
+  }
+}
