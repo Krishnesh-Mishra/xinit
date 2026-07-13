@@ -11,8 +11,8 @@ import { definePlugin } from "@xinit/core";
  *
  * Entry-file writes cooperate:
  *   - `ctx.wrap` inserts ChakraProvider and imports it.
- *   - `ctx.ensureLine` adds the `defaultSystem` named-import binding referenced
- *     by the `value` prop (which `wrap` does not add for prop values).
+ *   - `ctx.ensureImport` adds the `defaultSystem` named-import binding referenced
+ *     by the `value` prop (merged into the same `@chakra-ui/react` import).
  */
 export default definePlugin({
   name: "chakra",
@@ -37,13 +37,12 @@ export default definePlugin({
       props: { value: "{defaultSystem}" },
     });
 
-    // Bind `defaultSystem` referenced in the prop (a second named import from
-    // @chakra-ui/react, which `wrap` does not add).
-    ctx.ensureLine(
-      entry,
-      'import { defaultSystem } from "@chakra-ui/react";',
-      { position: "top" },
-    );
+    // Bind `defaultSystem` referenced in the prop — merged into the same
+    // @chakra-ui/react import `wrap` created for ChakraProvider.
+    ctx.ensureImport(entry, {
+      named: ["defaultSystem"],
+      from: "@chakra-ui/react",
+    });
 
     ctx.warn(
       "If your entry file is not the standard bootstrap, verify the " +

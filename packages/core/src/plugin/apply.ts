@@ -19,6 +19,7 @@ import {
   ensureLine,
   patchConfig,
   patchJson,
+  upsertEnv,
   wrapJsx,
 } from "../patch/index.js";
 
@@ -71,11 +72,18 @@ function realizeFileOp(
         file: op.file,
         content: ensureLine(before, op.line, op.opts).content,
       };
+    case "setEnv":
+      return { file: op.file, content: upsertEnv(before, op.key, op.value).content };
     case "ensureImport":
       return {
         file: op.file,
-        content: ensureImport(before, { import: op.import, call: op.call })
-          .content,
+        content: ensureImport(before, {
+          import: op.import,
+          named: op.named,
+          default: op.default,
+          from: op.from,
+          call: op.call,
+        }).content,
       };
     case "wrap":
       // Re-run against actual disk bytes; unresolvable ⇒ leave content as-is
@@ -175,6 +183,7 @@ function fileTarget(op: Op): string | null {
     case "patchJson":
     case "patchConfig":
     case "ensureLine":
+    case "setEnv":
     case "ensureImport":
     case "wrap":
       return op.file;

@@ -151,6 +151,7 @@ interface Ctx {
   configFile(kind: "vite"|"tailwind"|"tsconfig"|"next"|"metro"): string | null;
   find(candidates: string[]): string | null;  // first existing
   findOrCreate(candidates: string[], defaultPath: string, initialContent?: string): string;
+  envFile(): string;                           // existing `.env`, else conventional default `.env`
 
   // WRITES (deferred → Plan → applied on commit)
   install(pkgs: string[]): void;
@@ -160,7 +161,10 @@ interface Ctx {
   patchJson(file: string, merge: Record<string, unknown>): void;
   patchConfig(file: string, edit: ConfigEdit): void;
   ensureLine(file: string, line: string, opts?: { position?: "top" | "bottom"; after?: string }): void;
-  ensureImport(file: string, spec: { import: string; call?: string }): void;
+  setEnv(key: string, value: string, opts?: { file?: string; example?: boolean }): void;  // env-aware upsert
+  ensureImport(file: string, spec: {                 // side-effect / named / default import
+    import?: string; named?: string[]; default?: string; from?: string; call?: string;
+  }): void;
   wrap(file: string, wrappers: WrapSpec | WrapSpec[]): void;  // JSX provider-wrapping codemod
   setScript(name: string, command: string): void;
   run(cmd: string): void;              // requires capabilities.exec
@@ -182,6 +186,25 @@ hardcode `"src/index.css"` or `"vite.config.ts"`:
   plan overlay). If missing and not creating, returns the conventional default.
 - `configFile(kind)` — the real config file with its extension, or `null`.
 - `find` / `findOrCreate` — generic first-existing / first-existing-else-create.
+- `envFile()` — an existing `.env` relative to `appDir`, else the conventional
+  default `.env` (the default target for `setEnv`; the path may not exist yet).
+
+**`ctx.setEnv(key, value, opts?)`** — an env-aware upsert of `KEY=value` into
+`.env` (or `opts.file`). Its defining rule is **never overwrite an existing
+non-empty value**: if `KEY` already holds a value the developer set, `setEnv` is a
+no-op; if `KEY` is absent or present-but-empty (`KEY=`), it is set. The file is
+created if missing. Idempotent and CRLF-safe (via the pure `upsertEnv` patch fn,
+which quotes values containing spaces/special chars). `opts.example: true` also
+seeds `KEY=<value>` into the sibling `.env.example` under the same rules — one
+`setEnv` records one op for `.env` and one for `.env.example`.
+
+**`ctx.ensureImport(file, spec)`** — ensure an `import` exists (idempotent,
+CRLF-safe, position-aware). `spec` supports side-effect, named, and default
+shapes: `{ import: "x" }` → `import "x";`; `{ named: ["a","b"], from: "m" }` →
+`import { a, b } from "m";` (merged into an existing import from `m`);
+`{ default: "X", from: "m" }` → `import X from "m";`; `default` + `named` together
+→ `import X, { a } from "m";`. An optional `call` appends the call statement if
+absent (e.g. `{ named: ["connectDB"], from: "./config/mongo", call: "connectDB()" }`).
 
 **`ctx.wrap(file, wrappers)`** — a format-preserving JSX codemod (recast +
 `@babel/parser`) that wraps the app root in provider components. It targets the

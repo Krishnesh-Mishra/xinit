@@ -9,8 +9,8 @@ import { definePlugin } from "@xinit/core";
  *
  * Entry-file writes cooperate:
  *   - `ctx.wrap` inserts ThemeProvider + CssBaseline and imports both.
- *   - `ctx.ensureLine` adds the `theme` default-import binding referenced by the
- *     `theme` prop (which `wrap` does not add, and `ensureImport` cannot express).
+ *   - `ctx.ensureImport` adds the `theme` default-import binding referenced by
+ *     the `theme` prop (which `wrap` does not add).
  */
 export default definePlugin({
   name: "mui",
@@ -64,7 +64,7 @@ export default theme;
     ]);
 
     // Bind the `theme` referenced in the ThemeProvider prop (default import).
-    ctx.ensureLine(entry, 'import theme from "./theme";', { position: "top" });
+    ctx.ensureImport(entry, { default: "theme", from: "./theme" });
 
     ctx.warn(
       "If your entry file is not the standard bootstrap, verify ThemeProvider " +

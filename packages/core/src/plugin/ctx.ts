@@ -14,9 +14,11 @@ import type {
   ConfigEdit,
   ConfigFileKind,
   Ctx,
+  EnsureImportSpec,
   EnsureLineOpts,
   Op,
   Prompt,
+  SetEnvOpts,
   WrapSpec,
 } from "../types.js";
 
@@ -233,6 +235,11 @@ export class RecordingCtx implements Ctx {
     return candidates.find((p) => this.exists(p)) ?? null;
   }
 
+  /** An existing `.env` relative to appDir, else the conventional default `.env`. */
+  envFile(): string {
+    return this.find([".env"]) ?? ".env";
+  }
+
   findOrCreate(
     candidates: string[],
     defaultPath: string,
@@ -276,11 +283,23 @@ export class RecordingCtx implements Ctx {
     this.recorded.push({ op: "ensureLine", file, line, opts });
   }
 
-  ensureImport(file: string, spec: { import: string; call?: string }): void {
+  setEnv(key: string, value: string, opts?: SetEnvOpts): void {
+    const file = opts?.file ?? this.envFile();
+    this.recorded.push({ op: "setEnv", file, key, value });
+    if (opts?.example) {
+      // Seed a committed template alongside the real env file (same rules).
+      this.recorded.push({ op: "setEnv", file: `${file}.example`, key, value });
+    }
+  }
+
+  ensureImport(file: string, spec: EnsureImportSpec): void {
     this.recorded.push({
       op: "ensureImport",
       file,
       import: spec.import,
+      named: spec.named,
+      default: spec.default,
+      from: spec.from,
       call: spec.call,
     });
   }

@@ -137,6 +137,36 @@ export interface EnsureLineOpts {
   after?: string;
 }
 
+/**
+ * Import to ensure in a JS/TS file (see `ctx.ensureImport`). Shapes combine:
+ * - `{ import }` → a side-effect import `import "<import>";`.
+ * - `{ named, from }` → `import { ...named } from "<from>";` (merged into an
+ *   existing import from that module if present).
+ * - `{ default, from }` → `import <default> from "<from>";`.
+ * - `default` + `named` together → `import <default>, { ...named } from "<from>";`.
+ * - `call` additionally appends `<call>;` if that statement is absent.
+ */
+export interface EnsureImportSpec {
+  /** Module specifier for a side-effect import (`import "<import>";`). */
+  import?: string;
+  /** Named bindings to import from `from`, e.g. `["useState"]`. */
+  named?: string[];
+  /** Default binding to import from `from`, e.g. `"React"`. */
+  default?: string;
+  /** Module the `named`/`default` bindings are imported from. */
+  from?: string;
+  /** An initialization call statement to ensure exists, e.g. `"connectDB()"`. */
+  call?: string;
+}
+
+/** Options for `ctx.setEnv`. */
+export interface SetEnvOpts {
+  /** Target env file (relative to appDir). Default: `ctx.envFile()`. */
+  file?: string;
+  /** Also seed `KEY=<value>` into the sibling `.env.example`. Default: false. */
+  example?: boolean;
+}
+
 export interface Ctx {
   /** Absolute path to the app being modified (selected app in a monorepo, else project root). All relative paths you pass to `ctx` resolve against this. */
   readonly appDir: string;
@@ -190,6 +220,13 @@ export interface Ctx {
   /** First existing path among `candidates`, or null. */
   find(candidates: string[]): string | null;
   /**
+   * Resolve the app's env file: an existing `.env` relative to `appDir`, else the
+   * conventional default `.env` (which may not exist yet). The default target for
+   * `setEnv`.
+   * @example ctx.setEnv("REDIS_URL", "redis://localhost:6379", { file: ctx.envFile() });
+   */
+  envFile(): string;
+  /**
    * First existing path among `candidates`; else record `addFile(defaultPath,
    * initialContent ?? "")` and return `defaultPath`.
    */
@@ -207,7 +244,27 @@ export interface Ctx {
   patchJson(file: string, merge: Record<string, unknown>): void;
   patchConfig(file: string, edit: ConfigEdit): void;
   ensureLine(file: string, line: string, opts?: EnsureLineOpts): void;
-  ensureImport(file: string, spec: { import: string; call?: string }): void;
+  /**
+   * Env-aware upsert of `KEY=value`. **Never overwrites an existing non-empty
+   * value** — if `KEY` already holds a value, this is a no-op (the developer's
+   * value is preserved); if `KEY` is absent or empty (`KEY=`), it is set. The
+   * file is created if missing. Idempotent and CRLF-safe.
+   * @example ctx.setEnv("DATABASE_URL", "postgres://localhost:5432/app");
+   * @example // also seed a committed template:
+   * ctx.setEnv("REDIS_URL", "redis://localhost:6379", { example: true });
+   */
+  setEnv(key: string, value: string, opts?: SetEnvOpts): void;
+  /**
+   * Ensure an `import` exists in a JS/TS file (side-effect, named, and/or
+   * default), optionally appending an init `call`. Idempotent, CRLF-safe, and
+   * position-aware (placed near existing imports; merged into an existing import
+   * from the same module).
+   * @example ctx.ensureImport("src/main.tsx", { named: ["QueryClientProvider"], from: "@tanstack/react-query" });
+   * @example ctx.ensureImport("src/main.tsx", { default: "theme", from: "./theme" });
+   * @example ctx.ensureImport("src/server.ts", { named: ["connectDB"], from: "./config/mongo", call: "connectDB()" });
+   * @example ctx.ensureImport("vite.config.ts", { import: "./styles.css" }); // side-effect
+   */
+  ensureImport(file: string, spec: EnsureImportSpec): void;
   /**
    * Wrap the app's root JSX in one or more components (format-preserving
    * codemod). An array nests outermost-first. Unresolvable targets never
@@ -236,7 +293,16 @@ export type Op =
   | { op: "patchJson"; file: string; merge: Record<string, unknown> }
   | { op: "patchConfig"; file: string; edit: ConfigEdit }
   | { op: "ensureLine"; file: string; line: string; opts?: EnsureLineOpts }
-  | { op: "ensureImport"; file: string; import: string; call?: string }
+  | { op: "setEnv"; file: string; key: string; value: string }
+  | {
+      op: "ensureImport";
+      file: string;
+      import?: string;
+      named?: string[];
+      default?: string;
+      from?: string;
+      call?: string;
+    }
   | { op: "wrap"; file: string; wrappers: WrapSpec[] }
   | { op: "setScript"; name: string; command: string }
   | { op: "run"; cmd: string };

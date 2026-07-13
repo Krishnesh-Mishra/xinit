@@ -65,7 +65,8 @@ model User {
 `,
     );
 
-    ctx.ensureLine(".env", `DATABASE_URL="${url}"`, { position: "bottom" });
+    // Env-aware upsert: preserves an existing DATABASE_URL, seeds .env.example.
+    ctx.setEnv("DATABASE_URL", url, { example: true });
 
     // The user runs `npx prisma generate` (or `pnpm db:generate`) themselves.
     ctx.setScript("db:generate", "prisma generate");

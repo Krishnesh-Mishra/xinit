@@ -6,6 +6,7 @@ export { detectEol } from "./eol.js";
 export { patchJson } from "./json.js";
 export { patchConfig } from "./config.js";
 export { ensureLine } from "./line.js";
+export { upsertEnv } from "./env.js";
 export { ensureImport } from "./imports.js";
 export { wrapJsx, type WrapResult } from "./wrap.js";
 export { patchToml } from "./toml.js";

@@ -23,6 +23,7 @@ import {
   ensureLine,
   patchConfig,
   patchJson,
+  upsertEnv,
   wrapJsx,
 } from "../patch/index.js";
 
@@ -149,13 +150,29 @@ function projectFileOp(
         summary: `ensure line in ${op.file}: ${op.line}`,
       };
     }
-    case "ensureImport": {
+    case "setEnv": {
       const before = overlay.get(op.file);
       return {
         file: op.file,
         before,
-        result: ensureImport(before, { import: op.import, call: op.call }),
-        summary: `ensure import "${op.import}" in ${op.file}`,
+        result: upsertEnv(before, op.key, op.value),
+        summary: `set ${op.key} in ${op.file}`,
+      };
+    }
+    case "ensureImport": {
+      const before = overlay.get(op.file);
+      const what = op.import ?? op.from ?? "";
+      return {
+        file: op.file,
+        before,
+        result: ensureImport(before, {
+          import: op.import,
+          named: op.named,
+          default: op.default,
+          from: op.from,
+          call: op.call,
+        }),
+        summary: `ensure import${what ? ` "${what}"` : ""} in ${op.file}`,
       };
     }
     case "wrap": {

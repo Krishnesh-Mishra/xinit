@@ -41,8 +41,8 @@ export default definePlugin({
 
     ctx.copy("files/redis.ts", "src/config/redis.ts");
 
-    // Idempotent, CRLF-safe line insert (SPEC §6.3).
-    ctx.ensureLine(".env", `REDIS_URL=${url}`, { position: "bottom" });
+    // Env-aware upsert: preserves an existing REDIS_URL, seeds .env.example.
+    ctx.setEnv("REDIS_URL", url, { example: true });
 
     // Wire a side-effect import into the backend entry (create it if absent),
     // so the client connects on boot.

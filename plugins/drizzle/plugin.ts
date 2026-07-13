@@ -98,7 +98,8 @@ export default defineConfig({
 
     ctx.addFile("src/db/schema.ts", cfg.schema);
 
-    ctx.ensureLine(".env", `DATABASE_URL="${cfg.url}"`, { position: "bottom" });
+    // Env-aware upsert: preserves an existing DATABASE_URL, seeds .env.example.
+    ctx.setEnv("DATABASE_URL", cfg.url, { example: true });
 
     ctx.setScript("db:push", "drizzle-kit push");
   },

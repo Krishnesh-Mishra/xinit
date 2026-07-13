@@ -8,8 +8,8 @@ import { definePlugin } from "@xinit/core";
  *
  * Two writes cooperate on the entry file:
  *   - `ctx.wrap` inserts the provider and imports `QueryClientProvider`.
- *   - `ctx.ensureLine` adds the `queryClient` binding import (a named import
- *     `wrap` does not add for prop values, and `ensureImport` cannot express).
+ *   - `ctx.ensureImport` adds the `queryClient` binding import (a named import
+ *     `wrap` does not add for prop values).
  */
 export default definePlugin({
   name: "tanstack-query",
@@ -50,11 +50,10 @@ export const queryClient = new QueryClient({
 
     // Bind the `queryClient` referenced in the prop. `wrap` only imports the
     // wrapper component, so add the client's named import idempotently.
-    ctx.ensureLine(
-      entry,
-      'import { queryClient } from "./lib/queryClient";',
-      { position: "top" },
-    );
+    ctx.ensureImport(entry, {
+      named: ["queryClient"],
+      from: "./lib/queryClient",
+    });
 
     ctx.warn(
       "If your entry file is not the standard bootstrap, verify the " +
