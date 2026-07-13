@@ -123,7 +123,37 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@22.20.1)
 
+  plugins/bun:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/chakra:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/docker:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/drizzle:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
   plugins/express:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/fastify:
     devDependencies:
       '@xinit/core':
         specifier: workspace:*
@@ -135,7 +165,43 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
 
+  plugins/heroui-native:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/hono:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
   plugins/mongodb:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/mui:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/nestjs:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/nextjs:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/prisma:
     devDependencies:
       '@xinit/core':
         specifier: workspace:*
@@ -147,7 +213,67 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core
 
+  plugins/react-native-expo:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/redis:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
   plugins/shadcn:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/socketio:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/sveltekit:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/tailwind-v4:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/tanstack-query:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/uniwind:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/vue:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/ws:
+    devDependencies:
+      '@xinit/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+
+  plugins/zustand:
     devDependencies:
       '@xinit/core':
         specifier: workspace:*
