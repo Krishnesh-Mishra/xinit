@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-s3",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: AWS S3 client (@aws-sdk/client-s3 for JS/TS, boto3 for Python).",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}

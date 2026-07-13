@@ -1,0 +1,10 @@
+{
+  "name": "@initup/plugin-postgres",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "initup plugin: PostgreSQL client (pg for JS/TS, psycopg for Python).",
+  "devDependencies": {
+    "@initup/core": "workspace:*"
+  }
+}
